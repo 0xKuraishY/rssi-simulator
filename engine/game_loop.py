@@ -310,11 +310,18 @@ class GameApp:
             y -= 52
         self.toasts = list(reversed(remaining))
 
+    def _target_fps(self) -> int:
+        """Cadence réduite quand la fenêtre est réduite ou n'a pas le focus ; le temps de jeu
+        (comptes à rebours) continue de s'écouler normalement grâce au delta time."""
+        if self.headless or (pygame.display.get_active() and pygame.key.get_focused()):
+            return config.FPS
+        return config.IDLE_FPS
+
     def run(self, max_frames: int | None = None) -> None:
         frames = 0
         while self.running:
-            dt = self.clock.tick(config.FPS) / 1000.0
-            self.step(min(dt, 0.1))
+            dt = self.clock.tick(self._target_fps()) / 1000.0
+            self.step(min(dt, 0.25))  # 10 images/s en arrière-plan : dt ≈ 0,1 s ne doit pas être rogné
             pygame.display.flip()
             frames += 1
             if max_frames is not None and frames >= max_frames:

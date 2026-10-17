@@ -124,6 +124,7 @@ def user_paths() -> UserPaths:
 MIN_RESOLUTION = (1280, 720)
 DEFAULT_RESOLUTION = (1920, 1080)
 FPS = 60
+IDLE_FPS = 10  # fenêtre en arrière-plan ou réduite : économise le CPU
 HEADLESS_ENV = "SDL_VIDEODRIVER"
 HEADLESS_DRIVER = "offscreen"
 
