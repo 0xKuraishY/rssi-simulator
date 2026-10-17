@@ -165,14 +165,20 @@ système. Aucune installation, aucun compte, aucune connexion.
 
 | Système | Fichier | Lancement |
 |---|---|---|
-| Windows 10 / 11 | `rssi-simulator-vX.Y.Z-windows-x64.zip` | décompresser, puis double-cliquer sur `rssi-simulator.exe` |
-| Linux x86_64 | `rssi-simulator-vX.Y.Z-linux-x64.tar.gz` | voir ci-dessous |
+| Windows 10 / 11 | `rssi-simulator-windows.exe` | double-cliquer sur le fichier |
+| Linux x86_64 | `rssi-simulator-linux-x86_64` | voir ci-dessous |
 
-```bash
-tar xzf rssi-simulator-vX.Y.Z-linux-x64.tar.gz
-cd rssi-simulator-vX.Y.Z
-./rssi-simulator
-```
+Sous Linux, le fichier téléchargé n'est pas encore exécutable :
+
+- **depuis le gestionnaire de fichiers** : clic droit sur le fichier, **Propriétés**, activer
+  l'exécution comme programme (sous GNOME : onglet **Permissions**, case **Autoriser l'exécution
+  du fichier comme un programme**), puis double-cliquer dessus ;
+- **depuis un terminal** :
+
+  ```bash
+  chmod +x rssi-simulator-linux-x86_64
+  ./rssi-simulator-linux-x86_64
+  ```
 
 > [!NOTE]
 > Au premier lancement sous Windows, SmartScreen peut afficher "Windows a protégé votre
@@ -188,7 +194,7 @@ Chaque release publie un fichier `SHA256SUMS.txt`.
 
 ```powershell
 # Windows
-Get-FileHash .\rssi-simulator-vX.Y.Z-windows-x64.zip -Algorithm SHA256
+Get-FileHash .\rssi-simulator-windows.exe -Algorithm SHA256
 ```
 
 ```bash
