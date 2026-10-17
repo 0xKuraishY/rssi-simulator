@@ -1,0 +1,15 @@
+# Dépendances OPTIONNELLES pour la narration assistée par IA locale.
+# Le jeu est 100 % fonctionnel sans ces paquets (dialogues statiques YAML).
+#
+# Installation CPU (par défaut) :
+#   pip install -r requirements-ai.txt
+# Installation GPU NVIDIA (CUDA) :
+#   CMAKE_ARGS="-DGGML_CUDA=on" pip install -r requirements-ai.txt
+# Installation GPU AMD (ROCm) :
+#   CMAKE_ARGS="-DGGML_HIPBLAS=on" pip install -r requirements-ai.txt
+#
+# Le modèle GGUF n'est PAS fourni : le placer dans <dossier données>/models/.
+# Aucune requête réseau n'est effectuée par le jeu.
+
+-r requirements.txt
+llama-cpp-python>=0.3.0,<0.4

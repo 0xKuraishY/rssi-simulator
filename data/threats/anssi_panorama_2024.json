@@ -1,0 +1,35 @@
+{
+  "titre": "Données de calibrage de la menace — RSSI Simulator",
+  "avertissement": "Les probabilités utilisées par le moteur (scenarios/organisations/*.yaml) sont des PARAMÈTRES DE JEU calibrés pour la pédagogie, inspirés des tendances publiées par l'ANSSI. Les chiffres ci-dessous marqués « a_verifier » doivent être confrontés à la publication officielle avant toute diffusion institutionnelle.",
+  "sources": [
+    {"titre": "ANSSI — Panorama de la cybermenace 2024", "editeur": "ANSSI / CERT-FR", "url": "https://www.cert.ssi.gouv.fr/cti/"},
+    {"titre": "ANSSI — Panorama de la cybermenace 2023", "editeur": "ANSSI / CERT-FR", "url": "https://www.cert.ssi.gouv.fr/cti/"},
+    {"titre": "Cybermalveillance.gouv.fr — Rapport d'activité 2024", "editeur": "GIP ACYMA", "url": "https://www.cybermalveillance.gouv.fr"},
+    {"titre": "Baromètre de la cybersécurité des entreprises", "editeur": "CESIN / OpinionWay", "url": "https://www.cesin.fr"},
+    {"titre": "Hiscox Cyber Readiness Report 2024", "editeur": "Hiscox", "url": "https://www.hiscox.fr"}
+  ],
+  "chiffres_cles": [
+    {"libelle": "Événements de sécurité traités par l'ANSSI en 2024", "valeur": 4386, "source": "Panorama 2024", "statut": "a_verifier"},
+    {"libelle": "Incidents traités par l'ANSSI en 2024", "valeur": 1361, "source": "Panorama 2024", "statut": "a_verifier"},
+    {"libelle": "Compromissions par rançongiciel portées à la connaissance de l'ANSSI en 2024", "valeur": 144, "source": "Panorama 2024", "statut": "a_verifier"},
+    {"libelle": "Compromissions par rançongiciel portées à la connaissance de l'ANSSI en 2023", "valeur": 143, "source": "Panorama 2023", "statut": "a_verifier"}
+  ],
+  "tendances": [
+    "Les rançongiciels restent la menace la plus visible ; TPE/PME/ETI, collectivités territoriales, établissements de santé et d'enseignement supérieur figurent parmi les victimes les plus fréquentes.",
+    "Exploitation massive des vulnérabilités d'équipements de bordure (VPN, pare-feu) dès leur divulgation.",
+    "Recours croissant à l'exfiltration avant chiffrement (double extorsion).",
+    "DDoS de faible sophistication revendiqués par des groupes hacktivistes, en lien avec l'actualité géopolitique.",
+    "Attaques par la chaîne d'approvisionnement (prestataires, éditeurs, infogérants)."
+  ],
+  "calibrage_secteurs": {
+    "sante": {"ransomware": "très élevé", "fuite_donnees": "élevé", "commentaire": "Secteur prioritaire des programmes CaRE et de l'ANSSI."},
+    "collectivite": {"ransomware": "élevé", "ddos": "élevé (hacktivisme)", "commentaire": "Ressources SSI limitées."},
+    "industrie": {"phishing": "élevé (FOVI)", "ot_iot": "modéré", "commentaire": "PME : budgets contraints, PI convoitée."},
+    "numerique": {"supply_chain": "élevé", "compromission_cloud": "élevé", "commentaire": "Rebond vers les clients."},
+    "telecom": {"ddos": "très élevé", "espionnage": "élevé", "commentaire": "Opérateurs ciblés par des modes opératoires étatiques."}
+  },
+  "couts_reference": {
+    "commentaire": "Fourchettes de coûts d'incident reprises du cahier des charges (sources Hiscox / CESIN 2024 citées par le commanditaire) ; à vérifier.",
+    "INC-001": [150000, 3500000], "INC-002": [50000, 800000], "INC-003": [40000, 600000]
+  }
+}

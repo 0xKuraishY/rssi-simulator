@@ -1,0 +1,370 @@
+# Licence des contenus : CC BY-SA 4.0
+categorie: menaces
+evenements:
+  - id: EVT-MEN-01
+    titre: Alerte CERT-FR sur la passerelle VPN
+    de: "CERT-FR"
+    description: >
+      Le CERT-FR publie une alerte : une vulnérabilité critique affectant le modèle de
+      passerelle VPN que vous utilisez est activement exploitée. L'éditeur a publié un
+      correctif et des indicateurs de compromission. Nous sommes vendredi après-midi ; la
+      prochaine fenêtre de maintenance est prévue dans trois semaines.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 4
+    choix:
+      - id: A
+        texte: Appliquer le correctif ce week-end en astreinte et rechercher les indicateurs de compromission
+        qualite: bonne
+        effets:
+          cout: 3000
+          categorie: divers
+          reputation: {utilisateurs: -1, regulateurs: 2}
+        feedback: >
+          Une vulnérabilité activement exploitée sur un équipement exposé sur Internet justifie
+          un correctif hors cycle. La recherche des indicateurs de compromission est
+          indispensable : l'équipement a pu être compromis avant la mise à jour.
+        reference: "CERT-FR, alertes de sécurité ; ANSSI, Guide d'hygiène informatique"
+      - id: B
+        texte: Appliquer le contournement proposé par l'éditeur et patcher à la fenêtre de maintenance
+        qualite: moyenne
+        effets:
+          risque: [{type: vpn_exploit, facteur: 1.5, semaines: 4}]
+        feedback: >
+          Le contournement réduit l'exposition mais ne la supprime pas toujours, et les
+          attaquants contournent parfois ces mesures provisoires. Sans recherche de compromission,
+          une intrusion antérieure resterait invisible.
+        reference: "CERT-FR, alertes de sécurité"
+      - id: C
+        texte: Attendre la fenêtre de maintenance prévue
+        qualite: mauvaise
+        effets:
+          risque: [{type: vpn_exploit, facteur: 2.5, semaines: 4}]
+          incident: INC-005
+        feedback: >
+          Les équipements de bordure vulnérables sont exploités massivement dans les heures ou
+          les jours qui suivent la publication. Attendre trois semaines revient à laisser la
+          porte ouverte : la passerelle a été compromise.
+        reference: "CERT-FR, alertes de sécurité ; ANSSI, Guide d'hygiène informatique"
+
+  - id: EVT-MEN-02
+    titre: Campagne d'hameçonnage ciblant votre secteur
+    de: "CERT-FR"
+    description: >
+      Plusieurs organisations de votre secteur signalent une campagne d'hameçonnage
+      soignée : de faux courriels imitant un organisme public invitent à « mettre à jour vos
+      identifiants » sur un portail contrefait. Deux agents vous transfèrent déjà le message.
+    probabilite_semaine: 0.025
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 2
+    choix:
+      - id: A
+        texte: Diffuser une alerte interne avec exemples, bloquer le domaine et rappeler la procédure de signalement
+        qualite: bonne
+        effets:
+          cout: 1000
+          categorie: formation
+          reputation: {utilisateurs: 2}
+          risque: [{type: phishing, facteur: 0.8, semaines: 8}]
+        feedback: >
+          Une alerte ciblée, illustrée par le vrai message, est l'une des sensibilisations les
+          plus efficaces. Le blocage du domaine et la vérification des connexions des comptes
+          ayant cliqué complètent la réponse.
+        reference: "Cybermalveillance.gouv.fr, fiche « Hameçonnage »"
+      - id: B
+        texte: Bloquer le domaine sur la passerelle de messagerie sans communication
+        qualite: moyenne
+        effets:
+          risque: [{type: phishing, facteur: 1.2, semaines: 8}]
+        feedback: >
+          Le blocage technique est utile mais les attaquants changent rapidement de domaine.
+          Sans information des utilisateurs, les variantes suivantes passeront.
+        reference: "Cybermalveillance.gouv.fr, fiche « Hameçonnage »"
+      - id: C
+        texte: Ne rien faire, le filtre antispam suffit
+        qualite: mauvaise
+        effets:
+          risque: [{type: phishing, facteur: 1.8, semaines: 8}]
+        feedback: >
+          Des messages sont déjà parvenus dans les boîtes : le filtrage a échoué. Ignorer un
+          signal sectoriel expose à une compromission de comptes.
+        reference: "Cybermalveillance.gouv.fr, fiche « Hameçonnage »"
+
+  - id: EVT-MEN-03
+    titre: Identifiants d'employés publiés sur un forum
+    de: "Prestataire de veille"
+    description: >
+      Votre service de veille signale qu'une liste contenant des adresses électroniques
+      professionnelles de votre organisation et des mots de passe associés circule sur un
+      forum cybercriminel. Elle semble provenir de la fuite d'un site tiers sur lequel des
+      employés s'étaient inscrits avec leur adresse professionnelle.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 3
+    choix:
+      - id: A
+        texte: Forcer le changement des mots de passe concernés, vérifier les connexions récentes et généraliser la MFA
+        qualite: bonne
+        effets:
+          cout: 2000
+          categorie: divers
+          reputation: {utilisateurs: -1}
+          risque: [{type: compromission_cloud, facteur: 0.9, semaines: 12}]
+        feedback: >
+          La réutilisation de mots de passe permet le « credential stuffing ». Réinitialiser,
+          contrôler les journaux de connexion et imposer l'authentification multifacteur
+          neutralise la fuite.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe"
+      - id: B
+        texte: Envoyer un courriel demandant aux personnes concernées de changer leur mot de passe
+        qualite: moyenne
+        effets:
+          risque: [{type: compromission_cloud, facteur: 1.4, semaines: 12}]
+        feedback: >
+          Une simple invitation laisse une partie des comptes inchangés et ne vérifie pas si
+          les identifiants ont déjà été utilisés.
+        reference: "Cybermalveillance.gouv.fr, fiche « Mots de passe »"
+      - id: C
+        texte: Ignorer, la fuite concerne un site tiers
+        qualite: mauvaise
+        effets:
+          risque: [{type: compromission_cloud, facteur: 2.0, semaines: 12}, {type: phishing, facteur: 1.3, semaines: 12}]
+        feedback: >
+          Les attaquants testent systématiquement les identifiants divulgués sur les messageries
+          et accès distants des organisations. Une fuite « externe » devient vite un accès interne.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe"
+
+  - id: EVT-MEN-04
+    titre: Clé USB trouvée sur le parking
+    de: "Accueil"
+    description: >
+      Un agent d'accueil vous apporte une clé USB trouvée sur le parking, étiquetée
+      « Primes 2026 — confidentiel ». Un collègue curieux propose de la brancher « juste pour
+      voir à qui elle appartient ».
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 2
+    choix:
+      - id: A
+        texte: Ne pas la brancher, la faire analyser sur un poste isolé dédié et en faire un exemple de sensibilisation
+        qualite: bonne
+        effets:
+          cout: 500
+          categorie: formation
+          reputation: {utilisateurs: 1}
+          risque: [{type: ransomware, facteur: 0.95, semaines: 8}]
+        feedback: >
+          Le dépôt de supports amovibles piégés est une technique connue. Une station blanche
+          ou un poste isolé permet l'analyse sans risque, et l'anecdote nourrit utilement la
+          sensibilisation.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: B
+        texte: La jeter sans autre action
+        qualite: moyenne
+        effets: {}
+        feedback: >
+          Le risque immédiat est écarté, mais l'occasion de sensibiliser est perdue et une
+          éventuelle tentative ciblée passe inaperçue.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: C
+        texte: La brancher sur un poste de bureau pour identifier son propriétaire
+        qualite: mauvaise
+        effets:
+          risque: [{type: ransomware, facteur: 1.6, semaines: 8}]
+        feedback: >
+          Brancher un support inconnu sur le réseau de production peut exécuter un code
+          malveillant ou émuler un clavier. C'est précisément le scénario recherché par l'attaquant.
+        reference: "ANSSI, Guide d'hygiène informatique"
+
+  - id: EVT-MEN-05
+    titre: Un prestataire signale un incident chez lui
+    de: "Prestataire informatique"
+    description: >
+      Votre prestataire de maintenance applicative vous informe qu'il a subi une intrusion
+      la semaine dernière. Il ne sait pas encore si les comptes qu'il utilise pour se
+      connecter à votre système d'information ont été dérobés.
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 6
+    choix:
+      - id: A
+        texte: Suspendre ses accès, renouveler les secrets partagés, analyser ses connexions et exiger un rapport
+        qualite: bonne
+        effets:
+          cout: 4000
+          categorie: audit
+          reputation: {partenaires: 1, regulateurs: 2}
+          risque: [{type: supply_chain, facteur: 0.9, semaines: 12}]
+        feedback: >
+          Un prestataire compromis est un vecteur d'attaque direct. Couper ses accès, changer
+          les secrets et rechercher des traces d'usage anormal sont les premiers réflexes ; s'il
+          traite des données personnelles pour vous, il doit aussi vous fournir les éléments
+          nécessaires à votre propre analyse.
+        reference: "ANSSI, Maîtriser les risques de l'infogérance ; RGPD, art. 28 et 33"
+      - id: B
+        texte: Lui demander de changer ses mots de passe et attendre son rapport
+        qualite: moyenne
+        effets:
+          risque: [{type: supply_chain, facteur: 1.5, semaines: 12}]
+        feedback: >
+          Faire confiance au seul prestataire laisse vos systèmes exposés pendant l'enquête.
+          Vos propres journaux doivent être analysés.
+        reference: "ANSSI, Maîtriser les risques de l'infogérance"
+      - id: C
+        texte: Considérer que l'incident ne vous concerne pas
+        qualite: mauvaise
+        effets:
+          risque: [{type: supply_chain, facteur: 2.2, semaines: 16}, {type: ransomware, facteur: 1.3, semaines: 16}]
+        feedback: >
+          De nombreuses attaques par rançongiciel transitent par les accès d'un prestataire.
+          Ignorer le signalement est une faute de gestion des risques liés à la chaîne d'approvisionnement.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 21 ; ANSSI, Maîtriser les risques de l'infogérance"
+
+  - id: EVT-MEN-06
+    titre: Vague annoncée d'attaques DDoS hacktivistes
+    de: "CERT-FR"
+    description: >
+      À l'approche d'un événement international très médiatisé, des groupes hacktivistes
+      annoncent sur leurs canaux une campagne de déni de service visant les sites publics
+      français. Votre site institutionnel et vos services en ligne figurent parmi les cibles
+      potentielles.
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 8
+    choix:
+      - id: A
+        texte: Vérifier avec l'hébergeur et l'opérateur les protections anti-DDoS, préparer une page de repli et la communication
+        qualite: bonne
+        effets:
+          cout: 3000
+          categorie: externalisation
+          reputation: {utilisateurs: 1, presse: 1}
+          risque: [{type: ddos, facteur: 0.6, semaines: 8}]
+        feedback: >
+          L'essentiel de la protection contre le déni de service se joue en amont, chez
+          l'hébergeur et l'opérateur. Anticiper les contacts, le mode dégradé et la
+          communication limite l'impact d'une attaque surtout médiatique.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS"
+      - id: B
+        texte: Surveiller le site et réagir si une attaque survient
+        qualite: moyenne
+        effets:
+          risque: [{type: ddos, facteur: 1.2, semaines: 8}]
+        feedback: >
+          Réagir en pleine attaque, sans contacts ni procédure établis, allonge fortement
+          l'indisponibilité.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS"
+      - id: C
+        texte: Ignorer l'annonce, ces groupes font surtout du bruit
+        qualite: mauvaise
+        effets:
+          risque: [{type: ddos, facteur: 1.8, semaines: 8}]
+        feedback: >
+          Ces attaques sont rarement destructrices mais leur visibilité est forte. Sans
+          préparation, l'indisponibilité et la couverture médiatique sont subies.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS"
+
+  - id: EVT-MEN-07
+    titre: Appels d'un faux support technique
+    de: "Service d'assistance"
+    description: >
+      Plusieurs agents signalent des appels d'un prétendu « support Microsoft » leur
+      demandant d'installer un outil de prise en main à distance pour « corriger un virus ».
+      L'un d'eux a déjà accepté avant de se raviser.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 3
+    choix:
+      - id: A
+        texte: Isoler et analyser le poste concerné, alerter tout le personnel et rappeler le numéro du vrai support
+        qualite: bonne
+        effets:
+          cout: 1500
+          categorie: divers
+          reputation: {utilisateurs: 2}
+          risque: [{type: ransomware, facteur: 0.9, semaines: 8}]
+        feedback: >
+          Un outil de prise en main installé par un escroc donne un accès complet au poste. Le
+          poste doit être traité comme compromis ; rappeler que le support légitime ne sollicite
+          jamais ainsi les utilisateurs coupe court aux tentatives suivantes.
+        reference: "Cybermalveillance.gouv.fr, fiche « Arnaques au faux support technique »"
+      - id: B
+        texte: Désinstaller l'outil sur le poste et passer à autre chose
+        qualite: moyenne
+        effets:
+          risque: [{type: ransomware, facteur: 1.3, semaines: 8}]
+        feedback: >
+          La désinstallation ne garantit pas l'absence de persistance, et les autres agents
+          restent exposés faute d'alerte.
+        reference: "Cybermalveillance.gouv.fr, fiche « Arnaques au faux support technique »"
+      - id: C
+        texte: Considérer qu'il s'agit d'une arnaque visant les particuliers, sans enjeu pour l'organisation
+        qualite: mauvaise
+        effets:
+          risque: [{type: ransomware, facteur: 1.7, semaines: 8}, {type: fuite_donnees, facteur: 1.3, semaines: 8}]
+        feedback: >
+          Un poste professionnel pris en main à distance est un point d'entrée vers tout le
+          système d'information.
+        reference: "Cybermalveillance.gouv.fr, fiche « Arnaques au faux support technique »"
+
+  - id: EVT-MEN-08
+    titre: Données sensibles dans un outil d'IA générative grand public
+    de: "Délégué à la protection des données"
+    description: >
+      Le DPO constate que plusieurs services copient des documents internes, dont des données
+      personnelles, dans un assistant d'IA générative grand public pour rédiger des synthèses.
+      Aucun outil n'a été validé et les conditions d'utilisation autorisent la réutilisation
+      des contenus saisis.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 5
+    choix:
+      - id: A
+        texte: Encadrer l'usage par une charte, proposer une solution validée et sensibiliser les services
+        qualite: bonne
+        effets:
+          cout: 2500
+          categorie: formation
+          reputation: {utilisateurs: 1, regulateurs: 2}
+          risque: [{type: fuite_donnees, facteur: 0.85, semaines: 16}]
+        feedback: >
+          Interdire sans alternative pousse au contournement. Une règle claire sur les données
+          autorisées, un outil maîtrisé et une sensibilisation réduisent le risque de fuite
+          tout en répondant au besoin métier.
+        reference: "ANSSI, Recommandations de sécurité pour un système d'IA générative ; CNIL, recommandations sur l'IA"
+      - id: B
+        texte: Bloquer l'accès au service sur le proxy
+        qualite: moyenne
+        effets:
+          reputation: {utilisateurs: -2}
+          risque: [{type: fuite_donnees, facteur: 1.1, semaines: 16}]
+        feedback: >
+          Le blocage arrête l'usage sur le réseau interne mais pas depuis les téléphones
+          personnels ; le besoin non satisfait entretient le « shadow IT ».
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: C
+        texte: Laisser faire, l'outil fait gagner du temps
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -3}
+          risque: [{type: fuite_donnees, facteur: 1.7, semaines: 16}]
+        feedback: >
+          Transmettre des données personnelles à un service tiers sans base contractuelle ni
+          analyse est contraire au RGPD et expose à une fuite difficilement réversible.
+        reference: "RGPD, art. 5 et 28 ; CNIL, recommandations sur l'IA"

@@ -1,0 +1,111 @@
+# Référentiel EBIOS RM — sources de risque (SR), objectifs visés (OV), chemins d'attaque
+# Licence des contenus : CC BY-SA 4.0
+# Pertinence sectorielle (1-4) : calibrage pédagogique inspiré des panoramas de la cybermenace
+# de l'ANSSI (2022-2024) et de la typologie de la méthode EBIOS RM. Secteurs : sante,
+# collectivite, industrie, numerique, telecom. Motivation / ressources : échelle 1-4.
+
+objectifs_vises:
+  - {id: OV1, nom: "Gain financier (rançon, extorsion)", types_incident: [ransomware, double_extorsion, compromission_cloud, vpn_exploit]}
+  - {id: OV2, nom: "Espionnage (renseignement, propriété intellectuelle)", types_incident: [supply_chain, vpn_exploit, fuite_donnees, compromission_cloud, initie]}
+  - {id: OV3, nom: "Sabotage / déstabilisation", types_incident: [ot_iot, ddos, ransomware, supply_chain]}
+  - {id: OV4, nom: "Revendication idéologique", types_incident: [ddos, fuite_donnees]}
+  - {id: OV5, nom: "Vengeance", types_incident: [initie, fuite_donnees]}
+  - {id: OV6, nom: "Défi / notoriété", types_incident: [ddos, fuite_donnees, vpn_exploit]}
+  - {id: OV7, nom: "Fraude financière", types_incident: [phishing, compromission_cloud]}
+  - {id: OV8, nom: "Atteinte non intentionnelle", types_incident: [fuite_donnees, supply_chain]}
+  - {id: OV9, nom: "Révélation / divulgation", types_incident: [fuite_donnees, initie]}
+
+chemins_attaque:
+  - {id: CA1, nom: "Exploitation d'un service exposé sur Internet", vecteur: internet, types_incident: [vpn_exploit, fuite_donnees, ransomware, double_extorsion]}
+  - {id: CA2, nom: "Hameçonnage d'un utilisateur", vecteur: internet, types_incident: [phishing, ransomware, compromission_cloud, double_extorsion]}
+  - {id: CA3, nom: "Rebond via un prestataire ou un éditeur", vecteur: ecosysteme, types_incident: [supply_chain, ransomware, double_extorsion, ot_iot]}
+  - {id: CA4, nom: "Abus d'un accès légitime interne", vecteur: interne, types_incident: [initie, fuite_donnees]}
+  - {id: CA5, nom: "Compromission d'équipements connectés ou industriels", vecteur: physique, types_incident: [ot_iot, ddos]}
+  - {id: CA6, nom: "Saturation des services en ligne", vecteur: internet, types_incident: [ddos]}
+  - {id: CA7, nom: "Usurpation d'identité sur les services cloud", vecteur: internet, types_incident: [compromission_cloud, phishing]}
+
+sources_risque:
+  - id: SR1
+    nom: "État-nation (APT)"
+    description: Groupe d'attaquants soutenu par un État, très compétent et persistant.
+    motivation: 3
+    ressources: 4
+    objectifs: [OV2, OV3]
+    pertinence: {sante: 2, collectivite: 2, industrie: 3, numerique: 4, telecom: 4}
+  - id: SR2
+    nom: "Cybercriminel organisé"
+    description: Groupe à but lucratif (rançongiciel en affiliation, fraude), opportuniste.
+    motivation: 4
+    ressources: 3
+    objectifs: [OV1, OV7]
+    pertinence: {sante: 4, collectivite: 4, industrie: 4, numerique: 4, telecom: 3}
+  - id: SR3
+    nom: "Initié malveillant"
+    description: Salarié, agent ou prestataire interne agissant par rancœur ou appât du gain.
+    motivation: 2
+    ressources: 2
+    objectifs: [OV5, OV2, OV1]
+    pertinence: {sante: 2, collectivite: 2, industrie: 3, numerique: 3, telecom: 3}
+  - id: SR4
+    nom: "Hacktiviste"
+    description: Militant agissant pour une cause, souvent par DDoS ou défiguration.
+    motivation: 3
+    ressources: 2
+    objectifs: [OV4, OV3]
+    pertinence: {sante: 2, collectivite: 3, industrie: 1, numerique: 2, telecom: 3}
+  - id: SR5
+    nom: "Script kiddie"
+    description: Attaquant peu expérimenté utilisant des outils disponibles en ligne.
+    motivation: 2
+    ressources: 1
+    objectifs: [OV6]
+    pertinence: {sante: 2, collectivite: 2, industrie: 1, numerique: 2, telecom: 2}
+  - id: SR6
+    nom: "Prestataire négligent"
+    description: Fournisseur ou infogérant dont les pratiques exposent l'organisation.
+    motivation: 1
+    ressources: 2
+    objectifs: [OV8]
+    pertinence: {sante: 3, collectivite: 3, industrie: 3, numerique: 3, telecom: 3}
+  - id: SR7
+    nom: "Concurrent déloyal"
+    description: Entreprise cherchant à obtenir un avantage par le vol d'informations.
+    motivation: 2
+    ressources: 2
+    objectifs: [OV2]
+    pertinence: {sante: 1, collectivite: 1, industrie: 3, numerique: 3, telecom: 2}
+  - id: SR8
+    nom: "Journaliste / lanceur d'alerte"
+    description: Personne cherchant à révéler des dysfonctionnements ou des données.
+    motivation: 2
+    ressources: 1
+    objectifs: [OV9]
+    pertinence: {sante: 2, collectivite: 2, industrie: 1, numerique: 1, telecom: 2}
+  - id: SR9
+    nom: "Chercheur en sécurité (divulgation)"
+    description: Chercheur découvrant une faille et pouvant la divulguer, de façon coordonnée ou non.
+    motivation: 1
+    ressources: 2
+    objectifs: [OV9, OV6]
+    pertinence: {sante: 2, collectivite: 2, industrie: 1, numerique: 2, telecom: 2}
+  - id: SR10
+    nom: "Cyber-mercenaire"
+    description: Prestataire offensif agissant pour le compte d'un commanditaire.
+    motivation: 3
+    ressources: 3
+    objectifs: [OV2, OV3, OV1]
+    pertinence: {sante: 1, collectivite: 1, industrie: 2, numerique: 3, telecom: 3}
+  - id: SR11
+    nom: "Terroriste"
+    description: Groupe cherchant à provoquer des dommages physiques ou un effet de terreur.
+    motivation: 3
+    ressources: 2
+    objectifs: [OV3, OV4]
+    pertinence: {sante: 1, collectivite: 1, industrie: 1, numerique: 1, telecom: 2}
+  - id: SR12
+    nom: "Erreur interne"
+    description: Erreur de manipulation ou de configuration d'un collaborateur, sans intention de nuire.
+    motivation: 1
+    ressources: 1
+    objectifs: [OV8]
+    pertinence: {sante: 3, collectivite: 3, industrie: 2, numerique: 3, telecom: 3}

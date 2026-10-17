@@ -1,0 +1,58 @@
+# Licence des contenus : CC BY-SA 4.0 — organisation fictive, données de calibrage pédagogiques
+id: telecom
+nom: Hexalink Télécom
+type_label: Opérateur télécom
+secteur: telecom
+taille_employes: 2200
+postes_travail: 2600
+equipe_ssi: 15
+budget_it: 8000000
+budget_ssi: 640000
+chiffre_affaires: 900000000
+difficulte: 5
+taux_clic_initial: 0.10   # part du personnel cliquant sur un faux hameçonnage (calibrage pédagogique)
+contraintes_reglementaires: [Loi de programmation militaire — OIV, NIS2 — entité essentielle, Déclaration des incidents sous 24 h, RGPD (données de trafic et clients)]
+regimes: {rgpd: true, nis2: essentielle, hds: false, lpm_oiv: true, iso27001: true}
+traitement_grande_echelle: true
+facteur_cout: 0.85
+plafond_assurance: 20000000
+contrat_majeur: le contrat de service avec un grand compte de l'État
+description: >
+  Opérateur de communications électroniques désigné opérateur d'importance vitale.
+  Cœur de réseau, résolveurs DNS, interconnexions et millions d'abonnés : la moindre
+  indisponibilité est nationale et médiatique. Attaquants étatiques et hacktivistes ciblent
+  l'infrastructure.
+enjeux:
+  - "Disponibilité du service pour des millions d'abonnés et les services d'urgence."
+  - "Obligations LPM : systèmes d'information d'importance vitale (SIIV), déclaration d'incidents."
+  - "Menace étatique (espionnage, prépositionnement) et DDoS massifs."
+  - "Données de trafic et de localisation des abonnés."
+valeurs_metier:
+  - "Acheminement des communications (dont appels d'urgence)"
+  - "Résolution DNS et accès Internet des abonnés"
+  - "Facturation et relation client"
+assets_critiques:
+  - {id: coeur, nom: Cœur de réseau mobile et fixe, type: Infrastructure, criticite: primaire, dict: {D: 4, I: 4, C: 3, T: 4}}
+  - {id: dns, nom: Résolveurs DNS, type: Service, criticite: primaire, dict: {D: 4, I: 4, C: 2, T: 3}}
+  - {id: interco, nom: Interconnexions et routage BGP, type: Réseau, criticite: primaire, dict: {D: 4, I: 4, C: 2, T: 3}}
+  - {id: admin, nom: Réseau d'administration des équipements, type: Réseau, criticite: primaire, dict: {D: 3, I: 4, C: 4, T: 4}}
+  - {id: oss_bss, nom: OSS/BSS (supervision et facturation), type: Application, criticite: primaire, dict: {D: 3, I: 4, C: 3, T: 4}}
+  - {id: crm, nom: SI clients (données abonnés), type: Application, criticite: primaire, dict: {D: 3, I: 3, C: 4, T: 3}}
+  - {id: datacenters, nom: Bâtiments et salles techniques, type: Site, criticite: secondaire, dict: {D: 3, I: 2, C: 2, T: 2}}
+  - {id: messagerie, nom: Messagerie collaborative, type: Service, criticite: secondaire, dict: {D: 2, I: 2, C: 3, T: 2}}
+  - {id: boutiques, nom: SI des boutiques et partenaires de distribution, type: Application, criticite: secondaire, dict: {D: 2, I: 2, C: 3, T: 2}}
+probabilites_incidents:
+  ransomware: 0.10
+  phishing: 0.15
+  fuite_donnees: 0.10
+  supply_chain: 0.10
+  vpn_exploit: 0.10
+  ddos: 0.35
+  initie: 0.05
+  double_extorsion: 0.10
+  compromission_cloud: 0.10
+  ot_iot: 0.08
+socle_hygiene: [1, 2, 4, 5, 8, 9, 10, 11, 12, 14, 16, 17, 19, 21, 22, 23, 24, 26, 28, 34, 36, 37]
+mesures_initiales: [M07, M16, M18, M32, M35, M39]
+iso_avancement_initial: 55
+exposition: {internet: 4, ecosysteme: 3, interne: 3, physique: 3}

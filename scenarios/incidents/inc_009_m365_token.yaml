@@ -1,0 +1,185 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-009
+type: compromission_cloud
+title: Compromission de comptes Microsoft 365 malgré le MFA
+description: >
+  Plusieurs collaborateurs reçoivent un lien vers un faux document partagé. La page de connexion
+  affichée est un relais « adversary-in-the-middle » : elle transmet en temps réel les
+  saisies au véritable service Microsoft 365, y compris la validation MFA, et capture le
+  cookie de session émis. Avec ce jeton, l'attaquant accède aux boîtes aux lettres sans
+  repasser par l'authentification, crée des règles de transfert et de masquage, puis
+  envoie depuis ces comptes légitimes de fausses demandes de changement de coordonnées
+  bancaires aux partenaires et fournisseurs.
+based_on: >
+  Campagnes d'hameçonnage AiTM décrites par Microsoft à partir de 2022, menant à des
+  fraudes au changement de coordonnées bancaires (BEC) ; kits d'hameçonnage en tant que
+  service tels qu'EvilProxy et Tycoon 2FA, largement diffusés en 2023-2024.
+cve_references: []
+initial_vector: Lien d'hameçonnage vers une page relais AiTM imitant la connexion Microsoft 365
+attack_chain: [T1566.002, T1557, T1539, T1550.004, T1098.005, T1114.003, T1564.008, T1534, T1656]
+impact: {D: 1, I: 3, C: 3, T: 3}
+cout_min: 30000
+cout_max: 700000
+duree_semaines: {min: 1, max: 4}
+phase_detection_semaines: {min: 0, max: 6}
+obligations_declenchees: [cnil_72h, nis2_24h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {utilisateurs: -2, partenaires: -5, regulateurs: -2, presse: -2}
+mesures_cles: [M11, M12, M10, M21, M22, M01]
+references:
+  - "Microsoft Threat Intelligence, From cookie theft to BEC - Attackers use AiTM phishing sites as entry point to further financial fraud (juillet 2022)"
+  - "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe (2021)"
+  - "Cybermalveillance.gouv.fr, fiche réflexe « Piratage de compte en ligne »"
+  - "MITRE ATT&CK, T1557 Adversary-in-the-Middle et T1539 Steal Web Session Cookie"
+rex: >
+  Le MFA par code ou notification n'a pas empêché l'attaque : l'utilisateur a validé une
+  authentification réelle, relayée par l'attaquant, qui a récupéré le jeton de session.
+  Seules les méthodes résistantes à l'hameçonnage (clés FIDO2, passkeys, certificats), liées
+  au domaine légitime, déjouent ce relais. L'accès conditionnel (appareils gérés,
+  localisation, risque de connexion), la révocation rapide des sessions et l'alerte sur la
+  création de règles de messagerie complètent la défense. La fraude aux partenaires a été
+  stoppée par ceux qui appliquaient un contre-appel avant tout changement de coordonnées
+  bancaires.
+messages:
+  detection:
+    - {de: "Fournisseur", texte: "Nous avons reçu de votre service achats une demande de changement de RIB. Pouvez-vous confirmer ?"}
+    - {de: "Administrateur Microsoft 365", texte: "Trois comptes ont des connexions depuis un hébergeur étranger quelques minutes après une connexion légitime, avec la même session."}
+  confinement:
+    - {de: "Administrateur Microsoft 365", texte: "Des règles de boîte aux lettres déplacent automatiquement les messages contenant « virement » ou « RIB » vers un dossier caché."}
+  eradication:
+    - {de: "Prestataire de réponse", texte: "Une méthode MFA supplémentaire a été enregistrée par l'attaquant sur l'un des comptes."}
+  reprise:
+    - {de: "Direction", texte: "Pourquoi le MFA, déployé l'an dernier, n'a-t-il pas suffi ?"}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Administrateur Microsoft 365"
+    urgence: true
+    delai_secondes: 90
+    texte: >
+      Trois comptes sont utilisés par l'attaquant en ce moment. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Révoquer toutes les sessions et jetons, réinitialiser les mots de passe, supprimer les règles et méthodes MFA ajoutées, bloquer les connexions suspectes
+        qualite: bonne
+        effets: {cout_mult: 0.7, reputation: {partenaires: 1}}
+        feedback: >
+          Le jeton volé survit au changement de mot de passe s'il n'est pas révoqué. Les règles
+          et méthodes MFA ajoutées sont des moyens de persistance à supprimer.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe (2021)"
+      - id: B
+        texte: Réinitialiser uniquement les mots de passe des trois comptes
+        qualite: moyenne
+        effets: {cout_mult: 1.15, risque: [{type: compromission_cloud, facteur: 1.3, semaines: 12}]}
+        feedback: >
+          Insuffisant : les sessions et jetons d'actualisation existants peuvent rester
+          valides, ainsi que la méthode MFA ajoutée par l'attaquant.
+        reference: "MITRE ATT&CK, T1550.004 Web Session Cookie"
+      - id: C
+        texte: Demander aux utilisateurs concernés d'être vigilants et attendre l'analyse
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.5, duree_semaines: 1, reputation: {partenaires: -4}}
+        feedback: >
+          Pendant ce temps, l'attaquant continue d'écrire aux partenaires depuis des comptes
+          légitimes.
+        reference: "Cybermalveillance.gouv.fr, fiche réflexe « Piratage de compte en ligne »"
+  - id: D2
+    heure: 4
+    phase: confinement
+    de: "Direction des achats"
+    texte: >
+      Des messages frauduleux sont partis vers des dizaines de fournisseurs et partenaires.
+      Comment réagissez-vous ?
+    choix:
+      - id: A
+        texte: Prévenir rapidement les destinataires par un autre canal, leur demander d'ignorer toute modification de coordonnées et de vérifier par téléphone
+        qualite: bonne
+        effets: {cout_mult: 0.8, reputation: {partenaires: 3}}
+        feedback: >
+          Une alerte rapide empêche des virements vers les comptes des fraudeurs et
+          préserve la confiance des partenaires.
+        reference: "Cybermalveillance.gouv.fr, fiche réflexe « Hameçonnage (phishing) »"
+      - id: B
+        texte: Prévenir uniquement les fournisseurs qui se sont manifestés
+        qualite: moyenne
+        effets: {cout_mult: 1.1, reputation: {partenaires: -1}}
+        feedback: >
+          Ceux qui ne se sont pas manifestés sont justement ceux qui risquent de payer sur le
+          mauvais compte.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 25 (interconnexions et partenaires)"
+      - id: C
+        texte: Ne pas communiquer pour éviter de ternir l'image de l'organisation
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.3, reputation: {partenaires: -5, presse: -2}}
+        feedback: >
+          Les partenaires lésés découvriront la source de la fraude et en tiendront
+          l'organisation pour responsable.
+        reference: "ANSSI, Crise d'origine cyber, les clés d'une gestion opérationnelle et stratégique (2021)"
+  - id: D3
+    heure: 48
+    phase: eradication
+    de: "Délégué à la protection des données"
+    texte: >
+      L'attaquant a pu lire l'intégralité des boîtes aux lettres concernées, qui contiennent
+      des données personnelles. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Analyser les journaux d'accès aux messages, notifier la CNIL dans les 72 heures et évaluer l'information des personnes
+        qualite: bonne
+        effets: {reputation: {regulateurs: 3}}
+        feedback: >
+          L'accès non autorisé à une messagerie contenant des données personnelles est une
+          violation à notifier, sauf risque improbable pour les personnes.
+        reference: "RGPD, art. 33"
+      - id: B
+        texte: Considérer qu'il s'agit seulement d'une tentative de fraude, sans notification
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {regulateurs: -4}}
+        feedback: >
+          La finalité financière de l'attaque ne fait pas disparaître la violation de
+          confidentialité des messages consultés.
+        reference: "RGPD, art. 33"
+      - id: C
+        texte: Notifier la CNIL sans analyser ce qui a été consulté
+        qualite: moyenne
+        effets: {reputation: {regulateurs: 1}}
+        feedback: >
+          Notifier dans les délais est positif, mais sans analyse des journaux, impossible
+          d'évaluer le risque et de décider de l'information des personnes.
+        reference: "RGPD, art. 33 §3"
+  - id: D4
+    heure: 120
+    phase: reprise
+    de: "DSI"
+    texte: >
+      Comment empêcher qu'une telle attaque réussisse à nouveau ?
+    choix:
+      - id: A
+        texte: Clés FIDO2 ou passkeys pour les comptes sensibles, accès conditionnel (appareils gérés), alertes sur les règles de messagerie, contre-appel pour tout changement de RIB
+        qualite: bonne
+        effets: {cout_fixe: 30000, reputation: {partenaires: 2}, risque: [{type: compromission_cloud, facteur: 0.5, semaines: 104}, {type: phishing, facteur: 0.8, semaines: 52}]}
+        feedback: >
+          Une authentification liée au domaine légitime rend le relais AiTM inopérant ; l'accès
+          conditionnel empêche la réutilisation d'un jeton depuis un appareil inconnu.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe (2021)"
+      - id: B
+        texte: Renforcer la sensibilisation à l'hameçonnage
+        qualite: moyenne
+        defaut: true
+        effets: {cout_fixe: 5000, risque: [{type: compromission_cloud, facteur: 0.9, semaines: 26}]}
+        feedback: >
+          Utile, mais les pages AiTM reproduisent fidèlement la vraie connexion : la
+          vigilance seule ne suffit pas.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 2 (sensibiliser les utilisateurs)"
+      - id: C
+        texte: Passer du MFA par notification au MFA par SMS
+        qualite: mauvaise
+        effets: {risque: [{type: compromission_cloud, facteur: 1.2, semaines: 52}]}
+        feedback: >
+          Le code SMS est lui aussi relayé par la page AiTM et présente d'autres faiblesses ;
+          c'est un recul.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe (2021)"

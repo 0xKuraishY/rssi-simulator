@@ -1,0 +1,57 @@
+# Licence des contenus : CC BY-SA 4.0 — organisation fictive, données de calibrage pédagogiques
+id: mairie
+nom: Ville de Saint-Aubin-sur-Loire
+type_label: Mairie 50 000 habitants
+secteur: collectivite
+taille_employes: 420
+postes_travail: 380
+equipe_ssi: 1
+budget_it: 650000
+budget_ssi: 39000
+chiffre_affaires: 70000000   # budget de fonctionnement de la commune
+difficulte: 1
+taux_clic_initial: 0.22   # part du personnel cliquant sur un faux hameçonnage (calibrage pédagogique)
+contraintes_reglementaires: [RGPD, Contrôle de la CNIL, NIS2 — entité importante, Continuité du service public]
+regimes: {rgpd: true, nis2: importante, hds: false, lpm_oiv: false, iso27001: false}
+traitement_grande_echelle: false
+facteur_cout: 0.25
+plafond_assurance: 2000000
+contrat_majeur: la convention de mutualisation informatique avec l'intercommunalité
+description: >
+  Commune de 50 000 habitants : état civil, urbanisme, écoles, police municipale, action sociale.
+  Le SI est géré par une petite équipe, avec beaucoup d'applications métiers d'éditeurs et un
+  portail de démarches en ligne pour les citoyens.
+enjeux:
+  - "Continuité du service public (état civil, paie des agents, aides sociales)."
+  - "Données personnelles de toute la population, dont des données sociales sensibles."
+  - "Collectivités fréquemment victimes de rançongiciels et de DDoS hacktivistes."
+  - "Désignation d'un DPO obligatoire pour un organisme public."
+valeurs_metier:
+  - "Délivrance des actes d'état civil"
+  - "Paiement des agents et des prestations sociales"
+  - "Information et démarches en ligne des citoyens"
+assets_critiques:
+  - {id: etat_civil, nom: Logiciel d'état civil, type: Application, criticite: primaire, dict: {D: 3, I: 4, C: 3, T: 4}}
+  - {id: rh, nom: SI ressources humaines et paie, type: Application, criticite: primaire, dict: {D: 3, I: 4, C: 3, T: 3}}
+  - {id: finances, nom: Gestion financière et comptable, type: Application, criticite: primaire, dict: {D: 3, I: 4, C: 2, T: 4}}
+  - {id: portail, nom: Portail citoyen de démarches en ligne, type: Service, criticite: primaire, dict: {D: 3, I: 3, C: 3, T: 2}}
+  - {id: ad, nom: Annuaire Active Directory, type: Infrastructure, criticite: primaire, dict: {D: 4, I: 4, C: 3, T: 3}}
+  - {id: cadastre, nom: Cadastre et SIG urbanisme, type: Application, criticite: secondaire, dict: {D: 2, I: 3, C: 1, T: 2}}
+  - {id: messagerie, nom: Messagerie des agents, type: Service, criticite: secondaire, dict: {D: 2, I: 2, C: 2, T: 2}}
+  - {id: video, nom: Vidéoprotection urbaine, type: Matériel, criticite: secondaire, dict: {D: 2, I: 2, C: 3, T: 3}}
+  - {id: ecoles, nom: Réseau des écoles, type: Réseau, criticite: secondaire, dict: {D: 1, I: 1, C: 2, T: 1}}
+probabilites_incidents:
+  ransomware: 0.20
+  phishing: 0.20
+  fuite_donnees: 0.08
+  supply_chain: 0.05
+  vpn_exploit: 0.08
+  ddos: 0.10
+  initie: 0.03
+  double_extorsion: 0.12
+  compromission_cloud: 0.08
+  ot_iot: 0.0
+socle_hygiene: [8, 14, 17, 22, 26]
+mesures_initiales: [M07]
+iso_avancement_initial: 8
+exposition: {internet: 3, ecosysteme: 2, interne: 2, physique: 2}

@@ -1,0 +1,13 @@
+# Campagnes de menace génériques (bulletins de veille simulés). Licence des contenus : CC BY-SA 4.0.
+# Textes volontairement génériques : aucune campagne réelle n'est décrite ni datée.
+campagnes:
+  - {id: CAMP-01, titre: "Vague de rançongiciels visant votre secteur", texte: "Plusieurs organisations de votre secteur ont été chiffrées ces dernières semaines. Les attaquants exploitent des accès VPN non protégés par MFA.", facteurs: {ransomware: 1.6, double_extorsion: 1.5, vpn_exploit: 1.3}, duree: 8}
+  - {id: CAMP-02, titre: "Campagne d'hameçonnage usurpant un organisme public", texte: "Des courriels piégés imitant une administration incitent à saisir des identifiants sur de faux portails.", facteurs: {phishing: 1.7, compromission_cloud: 1.4}, duree: 6}
+  - {id: CAMP-03, titre: "Hacktivistes : DDoS annoncés contre des sites français", texte: "Un groupe hacktiviste publie des listes de cibles françaises en lien avec l'actualité internationale.", facteurs: {ddos: 2.2}, duree: 5}
+  - {id: CAMP-04, titre: "Exploitation massive d'équipements de bordure", texte: "Une vulnérabilité critique d'équipement de sécurité exposé est exploitée à grande échelle quelques heures après sa divulgation.", facteurs: {vpn_exploit: 1.8, ransomware: 1.2}, duree: 6}
+  - {id: CAMP-05, titre: "Fraude au président en recrudescence", texte: "Les signalements d'usurpation de dirigeants et de faux changements de coordonnées bancaires augmentent fortement.", facteurs: {phishing: 1.6}, duree: 8}
+  - {id: CAMP-06, titre: "Compromissions de prestataires informatiques", texte: "Des infogérants et éditeurs ont été compromis puis utilisés pour atteindre leurs clients.", facteurs: {supply_chain: 1.9}, duree: 10}
+  - {id: CAMP-07, titre: "Vol de jetons de session sur les messageries cloud", texte: "Des kits d'hameçonnage « adversary-in-the-middle » contournent l'authentification multifacteur classique.", facteurs: {compromission_cloud: 1.8, phishing: 1.2}, duree: 8}
+  - {id: CAMP-08, titre: "Fuites de données revendiquées sur des forums criminels", texte: "Des bases de données d'organisations françaises sont mises en vente après l'exploitation d'API mal protégées.", facteurs: {fuite_donnees: 1.7, double_extorsion: 1.2}, duree: 8}
+  - {id: CAMP-09, titre: "Reconnaissance ciblant les systèmes industriels", texte: "Des balayages d'automates et d'interfaces de supervision exposées sont observés.", facteurs: {ot_iot: 2.0}, duree: 10}
+  - {id: CAMP-10, titre: "Période d'accalmie relative", texte: "La veille ne signale pas de campagne particulière visant votre secteur : profitez-en pour avancer sur vos chantiers.", facteurs: {tous: 0.85}, duree: 6}

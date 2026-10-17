@@ -1,0 +1,186 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-002
+type: phishing
+title: Hameçonnage ciblé de la direction financière et faux ordre de virement
+description: >
+  Le directeur administratif et financier reçoit un courriel imitant une page de connexion à
+  la messagerie. Ses identifiants sont dérobés ; l'attaquant lit les échanges, repère un
+  dossier confidentiel en cours et se fait passer pour la direction générale afin d'obtenir
+  un virement urgent vers un compte étranger. Il exploite ensuite le même compte pour
+  accéder à d'autres ressources du système d'information.
+based_on: >
+  Fraude au président et faux ordres de virement (FOVI), régulièrement signalés en France
+  par les forces de l'ordre et Cybermalveillance.gouv.fr ; compromission de messagerie
+  professionnelle (BEC), parmi les fraudes les plus coûteuses recensées chaque année par le
+  FBI IC3.
+cve_references: []
+initial_vector: Courriel d'hameçonnage ciblé vers la direction financière (fausse page de connexion)
+attack_chain: [T1598.003, T1566.002, T1078, T1114.002, T1564.008, T1534, T1656]
+impact: {D: 1, I: 3, C: 3, T: 2}
+cout_min: 50000
+cout_max: 800000
+duree_semaines: {min: 1, max: 4}
+phase_detection_semaines: {min: 0, max: 2}
+obligations_declenchees: [cnil_72h, nis2_24h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {partenaires: -4, regulateurs: -2, presse: -3}
+mesures_cles: [M22, M10, M21, M01, M12]
+references:
+  - "Cybermalveillance.gouv.fr, fiche réflexe « Hameçonnage (phishing) »"
+  - "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe (2021)"
+  - "ANSSI, Guide d'hygiène informatique, mesures 2 (sensibilisation) et 13 (authentification forte)"
+  - "MITRE ATT&CK, T1566 Phishing et T1114 Email Collection"
+rex: >
+  La fraude a réussi parce qu'un seul mot de passe protégeait la messagerie d'un dirigeant
+  et qu'aucune procédure n'imposait un contre-appel sur un numéro connu avant un virement
+  inhabituel. Les deux protections sont complémentaires : l'authentification multifacteur
+  rend le vol d'identifiants moins rentable, la double validation des virements neutralise
+  la manipulation psychologique. En cas de virement frauduleux, la rapidité de la demande de
+  rappel des fonds auprès de la banque conditionne les chances de récupération.
+messages:
+  detection:
+    - {de: "Comptabilité fournisseurs", texte: "La banque nous interroge sur un virement de 380 000 € vers un compte à l'étranger, validé hier par la direction financière."}
+    - {de: "Direction financière", texte: "Je n'ai jamais demandé ce virement. J'ai bien reçu un courriel de la direction générale, mais ce n'était pas son adresse habituelle."}
+  confinement:
+    - {de: "Administrateur messagerie", texte: "Le compte du DAF a été ouvert depuis une adresse IP étrangère ; une règle de messagerie masque les réponses de la banque."}
+  eradication:
+    - {de: "Prestataire de réponse", texte: "Le même compte a servi à consulter l'intranet et le partage des ressources humaines. Nous vérifions d'autres comptes."}
+  reprise:
+    - {de: "Direction générale", texte: "Comment s'assurer que cela ne se reproduira pas ?"}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Direction financière"
+    urgence: true
+    delai_secondes: 60
+    texte: >
+      Le virement est parti hier. La banque indique qu'une demande de rappel des fonds est
+      encore possible si elle est formulée immédiatement. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Demander immédiatement le rappel des fonds à la banque et préparer le dépôt de plainte
+        qualite: bonne
+        effets: {cout_mult: 0.5, reputation: {partenaires: 1}}
+        feedback: >
+          Les premières heures sont décisives : plus la demande de retour des fonds est
+          rapide, plus il y a de chances de bloquer l'argent avant qu'il soit dispersé. La
+          plainte appuie la démarche de la banque.
+        reference: "Cybermalveillance.gouv.fr, conseils aux victimes d'escroquerie au faux ordre de virement"
+      - id: B
+        texte: Lancer d'abord une enquête interne pour comprendre ce qui s'est passé
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.3, reputation: {partenaires: -2}}
+        feedback: >
+          L'enquête interne est utile mais ne doit pas retarder l'action bancaire : une fois
+          les fonds transférés vers d'autres comptes, ils sont rarement récupérés.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 40 (procédure de gestion des incidents)"
+      - id: C
+        texte: Contacter le destinataire du virement pour lui demander de restituer les fonds
+        qualite: moyenne
+        effets: {cout_mult: 1.1}
+        feedback: >
+          Contacter l'escroc n'aboutit pas et peut l'alerter. La démarche doit passer par la
+          banque et les autorités.
+        reference: "Cybermalveillance.gouv.fr, fiche réflexe « Hameçonnage (phishing) »"
+  - id: D2
+    heure: 3
+    phase: confinement
+    de: "Administrateur messagerie"
+    texte: >
+      Le compte du DAF est toujours actif et une règle de transfert est en place. Comment
+      reprenez-vous la main ?
+    choix:
+      - id: A
+        texte: Réinitialiser le mot de passe, révoquer toutes les sessions, supprimer les règles malveillantes et activer le MFA
+        qualite: bonne
+        effets: {reputation: {regulateurs: 1}, risque: [{type: phishing, facteur: 0.7, semaines: 26}]}
+        feedback: >
+          Changer le mot de passe ne suffit pas : les sessions ouvertes et les règles de
+          messagerie permettent à l'attaquant de rester présent. Le MFA limite une récidive.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe (2021)"
+      - id: B
+        texte: Changer uniquement le mot de passe du DAF
+        qualite: moyenne
+        effets: {cout_mult: 1.1, risque: [{type: phishing, facteur: 1.2, semaines: 12}]}
+        feedback: >
+          Mesure nécessaire mais incomplète : les règles de transfert et les jetons de
+          session existants peuvent survivre au changement de mot de passe.
+        reference: "MITRE ATT&CK, T1114.003 Email Forwarding Rule"
+      - id: C
+        texte: Ne rien changer pour ne pas éveiller les soupçons de l'attaquant
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.4, duree_semaines: 2, reputation: {partenaires: -3}, risque: [{type: phishing, facteur: 1.5, semaines: 26}]}
+        feedback: >
+          L'attaquant continue de lire la messagerie et peut cibler les partenaires depuis un
+          compte légitime. L'observation discrète relève de spécialistes et d'un cadre précis.
+        reference: "ANSSI, Crise d'origine cyber, les clés d'une gestion opérationnelle et stratégique (2021)"
+  - id: D3
+    heure: 24
+    phase: eradication
+    de: "Délégué à la protection des données"
+    texte: >
+      L'attaquant a consulté des dossiers du personnel et des échanges avec des usagers ou
+      clients. Faut-il notifier ?
+    choix:
+      - id: A
+        texte: Qualifier la violation avec le DPO et notifier la CNIL dans les 72 heures, en complétant ensuite si besoin
+        qualite: bonne
+        effets: {reputation: {regulateurs: 3}}
+        feedback: >
+          Une consultation non autorisée de données personnelles est une violation au sens du
+          RGPD. La notification peut être faite en plusieurs temps si l'analyse n'est pas
+          terminée.
+        reference: "RGPD, art. 33 ; CNIL, page « Les violations de données personnelles »"
+      - id: B
+        texte: Ne pas notifier, puisqu'il s'agit surtout d'une fraude financière
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {regulateurs: -5}}
+        feedback: >
+          La finalité de l'attaque ne change rien : dès lors que des données personnelles ont
+          été consultées, l'obligation d'analyse et, le plus souvent, de notification
+          s'applique.
+        reference: "RGPD, art. 33"
+      - id: C
+        texte: Attendre la fin de l'expertise pour notifier en une seule fois
+        qualite: moyenne
+        effets: {reputation: {regulateurs: -2}}
+        feedback: >
+          Le délai de 72 heures court à partir de la prise de connaissance de la violation.
+          Une notification initiale puis complémentaire est préférable.
+        reference: "RGPD, art. 33 §4"
+  - id: D4
+    heure: 96
+    phase: reprise
+    de: "Direction générale"
+    texte: >
+      Quelles mesures durables retenez-vous pour la direction financière ?
+    choix:
+      - id: A
+        texte: Double validation et contre-appel obligatoire pour tout virement inhabituel, MFA généralisé, sensibilisation ciblée des fonctions exposées
+        qualite: bonne
+        effets: {cout_fixe: 15000, reputation: {partenaires: 2}, risque: [{type: phishing, facteur: 0.6, semaines: 52}]}
+        feedback: >
+          Combiner une procédure métier robuste et des protections techniques couvre à la fois
+          la manipulation humaine et le vol d'identifiants.
+        reference: "ANSSI, Guide d'hygiène informatique, mesures 2 et 13"
+      - id: B
+        texte: Une note de rappel à la vigilance à l'ensemble du personnel
+        qualite: mauvaise
+        defaut: true
+        effets: {risque: [{type: phishing, facteur: 1.2, semaines: 26}]}
+        feedback: >
+          Un simple rappel s'estompe en quelques semaines et ne change pas le processus de
+          validation des paiements, qui reste le point faible.
+        reference: "Cybermalveillance.gouv.fr, kit de sensibilisation"
+      - id: C
+        texte: Un filtrage renforcé de la messagerie uniquement
+        qualite: moyenne
+        effets: {cout_fixe: 10000, risque: [{type: phishing, facteur: 0.85, semaines: 52}]}
+        feedback: >
+          Utile contre les courriels malveillants, mais un hameçonnage bien construit finit
+          par passer : la procédure de virement reste indispensable.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 24 (messagerie)"

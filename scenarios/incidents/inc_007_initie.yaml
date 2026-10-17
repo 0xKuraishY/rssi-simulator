@@ -1,0 +1,186 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-007
+type: initie
+title: Exfiltration de données par un collaborateur sur le départ
+description: >
+  Un collaborateur disposant de droits étendus prépare son départ vers un concurrent ou un
+  autre employeur. Pendant plusieurs semaines, il copie des fichiers sensibles (données des
+  usagers ou clients, documents techniques, tarifs, dossiers du personnel) vers un service
+  de stockage en ligne personnel et une clé USB. Ses droits n'ayant jamais été revus, il
+  accède à des ressources sans lien avec ses fonctions. La fuite est découverte longtemps
+  après, lorsque des informations internes réapparaissent chez un tiers.
+based_on: >
+  Cas récurrents de départs de salariés avec des données de l'entreprise, traités en France
+  par les juridictions pénales (accès et maintien frauduleux, extraction de données) et
+  commerciales (secret des affaires) ; la menace interne figure parmi les risques suivis
+  par l'ENISA.
+cve_references: []
+initial_vector: Usage abusif d'accès légitimes et de droits excessifs par un collaborateur
+attack_chain: [T1078, T1083, T1213, T1074.001, T1560.001, T1567.002, T1052.001]
+impact: {D: 1, I: 2, C: 4, T: 3}
+cout_min: 50000
+cout_max: 900000
+duree_semaines: {min: 2, max: 8}
+phase_detection_semaines: {min: 8, max: 40}
+obligations_declenchees: [cnil_72h, hds_signalement, nis2_24h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {utilisateurs: -3, partenaires: -4, regulateurs: -2, presse: -3}
+mesures_cles: [M31, M30, M32, M40, M07]
+references:
+  - "ANSSI, Guide d'hygiène informatique, mesures 6 (arrivées et départs), 8 (identification nominative) et 9 (droits sur les ressources sensibles)"
+  - "CNIL, Guide de la sécurité des données personnelles (édition 2024)"
+  - "MITRE ATT&CK, T1567.002 Exfiltration to Cloud Storage et T1052.001 Exfiltration over USB"
+  - "Code pénal, art. 323-1 et 323-3 ; Code de commerce, art. L.151-1 et suivants (secret des affaires)"
+rex: >
+  Les accès utilisés étaient légitimes : aucune alerte technique classique ne s'est
+  déclenchée. Ce sont l'accumulation de droits au fil des changements de poste, l'absence de
+  revue périodique et l'absence de surveillance des volumes inhabituels qui ont rendu la
+  fuite possible et tardivement visible. Les violations restent en général longtemps
+  inaperçues : le rapport IBM / Ponemon Cost of a Data Breach 2018 estimait à 197 jours le
+  délai moyen d'identification d'une violation, tous types d'incidents confondus. La
+  réponse doit associer DSI, ressources humaines, DPO et service juridique, dans le respect
+  du droit du travail et de la vie privée du salarié.
+messages:
+  detection:
+    - {de: "Direction commerciale", texte: "Un partenaire nous transmet une offre concurrente qui reprend mot pour mot nos conditions et une partie de notre fichier."}
+    - {de: "Administrateur systèmes", texte: "Les journaux montrent qu'un collaborateur parti le mois dernier a téléchargé plusieurs dizaines de gigaoctets dans ses dernières semaines."}
+  confinement:
+    - {de: "Ressources humaines", texte: "Un autre collaborateur de la même équipe a remis sa démission hier."}
+  eradication:
+    - {de: "Administrateur systèmes", texte: "Le compte de l'ancien collaborateur a été désactivé, mais un jeton d'accès à la messagerie en ligne est toujours valide."}
+  reprise:
+    - {de: "Direction générale", texte: "Comment éviter que cela se reproduise sans installer un climat de défiance ?"}
+decisions:
+  - id: D1
+    heure: 2
+    phase: confinement
+    de: "Direction des ressources humaines"
+    urgence: true
+    delai_secondes: 120
+    texte: >
+      Un second collaborateur de la même équipe vient de démissionner et dispose des mêmes
+      droits. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Restreindre ses droits au strict nécessaire et renforcer la journalisation de ses accès, en lien avec la DRH et le juriste, dans le respect de la charte informatique
+        qualite: bonne
+        effets: {cout_mult: 0.8, reputation: {partenaires: 1}}
+        feedback: >
+          Réduire les droits au besoin réel est légitime et proportionné. Toute surveillance
+          doit être prévue par la charte et respecter le droit du travail et le RGPD.
+        reference: "ANSSI, Guide d'hygiène informatique, mesures 6 et 9"
+      - id: B
+        texte: Fouiller sa messagerie personnelle et son téléphone pour vérifier
+        qualite: mauvaise
+        effets: {cout_fixe: 30000, reputation: {regulateurs: -3, presse: -2}}
+        feedback: >
+          Une surveillance disproportionnée ou l'accès à des contenus personnels expose
+          l'organisation à des poursuites et rend les preuves inutilisables.
+        reference: "CNIL, référentiels et recommandations sur la surveillance des salariés"
+      - id: C
+        texte: Ne rien changer jusqu'à son départ effectif
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.4, risque: [{type: initie, facteur: 1.5, semaines: 12}]}
+        feedback: >
+          La période de préavis est précisément celle où le risque d'exfiltration est le
+          plus élevé.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 6 (arrivées et départs)"
+  - id: D2
+    heure: 24
+    phase: confinement
+    de: "Service juridique"
+    texte: >
+      Comment préservez-vous vos droits face à l'ancien collaborateur et au tiers qui exploite
+      les données ?
+    choix:
+      - id: A
+        texte: Faire constater et conserver les preuves (journaux, copies), déposer plainte et engager les actions civiles avec un avocat
+        qualite: bonne
+        effets: {cout_fixe: 20000, cout_mult: 0.85, reputation: {partenaires: 2}}
+        feedback: >
+          Des preuves recueillies proprement conditionnent la plainte pénale et les mesures
+          visant à faire cesser l'exploitation des données.
+        reference: "Code pénal, art. 323-1 et 323-3 ; Code de commerce, art. L.151-1"
+      - id: B
+        texte: Contacter directement l'ancien collaborateur pour lui demander de supprimer les fichiers
+        qualite: moyenne
+        effets: {cout_mult: 1.05}
+        feedback: >
+          La démarche amiable peut avoir sa place, mais seule, elle risque de provoquer la
+          destruction des preuves sans garantie de suppression des données.
+        reference: "Code de commerce, art. L.151-1 et suivants"
+      - id: C
+        texte: Ne pas engager de procédure pour éviter la publicité
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.3, risque: [{type: initie, facteur: 1.3, semaines: 52}]}
+        feedback: >
+          L'absence de réaction prive l'organisation de tout recours et envoie un signal
+          d'impunité en interne.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 40 (procédure de gestion des incidents)"
+  - id: D3
+    heure: 48
+    phase: eradication
+    de: "Délégué à la protection des données"
+    texte: >
+      Les fichiers copiés contiennent des données personnelles d'usagers ou de clients et des
+      dossiers du personnel. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Documenter la violation, notifier la CNIL dans les 72 heures et évaluer l'information des personnes concernées
+        qualite: bonne
+        effets: {reputation: {regulateurs: 3}}
+        feedback: >
+          Une extraction de données personnelles par un salarié hors de ses fonctions est une
+          violation de données : l'auteur interne ne dispense pas de la notifier.
+        reference: "RGPD, art. 33 et 34"
+      - id: B
+        texte: Ne pas notifier, l'auteur étant identifié
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {regulateurs: -5}}
+        feedback: >
+          L'identification de l'auteur ne supprime pas le risque pour les personnes : les
+          données sont désormais hors du contrôle de l'organisation.
+        reference: "RGPD, art. 33"
+      - id: C
+        texte: Notifier uniquement pour les données des usagers ou clients
+        qualite: moyenne
+        effets: {reputation: {regulateurs: -1}}
+        feedback: >
+          Les données des salariés sont aussi des données personnelles, souvent sensibles.
+          La notification doit couvrir l'ensemble.
+        reference: "RGPD, art. 4 et 33"
+  - id: D4
+    heure: 168
+    phase: reprise
+    de: "Direction générale"
+    texte: >
+      Quelles mesures durables retenez-vous ?
+    choix:
+      - id: A
+        texte: Revue périodique des droits, procédure de départ formalisée (révocation des accès et jetons), détection des transferts inhabituels et blocage des supports amovibles non autorisés
+        qualite: bonne
+        effets: {cout_fixe: 30000, risque: [{type: initie, facteur: 0.6, semaines: 104}]}
+        feedback: >
+          Le moindre privilège et une procédure de départ systématique limitent ce qu'un
+          initié peut emporter ; la détection raccourcit le délai de découverte.
+        reference: "ANSSI, Guide d'hygiène informatique, mesures 6, 9 et 15"
+      - id: B
+        texte: Surveiller en continu l'activité détaillée de tout le personnel
+        qualite: mauvaise
+        effets: {cout_fixe: 40000, reputation: {regulateurs: -3, utilisateurs: -2}}
+        feedback: >
+          Une surveillance généralisée et non proportionnée est contraire au RGPD et au droit
+          du travail, et dégrade la confiance sans cibler le risque.
+        reference: "CNIL, Guide de la sécurité des données personnelles (édition 2024)"
+      - id: C
+        texte: Faire signer un engagement de confidentialité renforcé aux collaborateurs
+        qualite: moyenne
+        defaut: true
+        effets: {cout_fixe: 5000, risque: [{type: initie, facteur: 0.95, semaines: 52}]}
+        feedback: >
+          Utile sur le plan juridique, mais sans effet technique sur la capacité à copier les
+          données.
+        reference: "Code de commerce, art. L.151-1 et suivants (secret des affaires)"

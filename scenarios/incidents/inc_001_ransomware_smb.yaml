@@ -1,0 +1,180 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-001
+type: ransomware
+title: Rançongiciel propagé via SMB (EternalBlue)
+description: >
+  Un serveur Windows non corrigé, exposé sur le réseau interne, est compromis via la
+  vulnérabilité SMBv1 MS17-010. Le rançongiciel se propage latéralement à l'ensemble des
+  serveurs et postes joignables, puis chiffre les données et supprime les clichés instantanés.
+based_on: >
+  WannaCry (mai 2017) et NotPetya (juin 2017), qui ont exploité EternalBlue pour se propager
+  massivement ; la vulnérabilité reste exploitée en 2024 sur les parcs non corrigés.
+cve_references:
+  - id: CVE-2017-0144
+    nom: EternalBlue (MS17-010)
+    description: Exécution de code à distance dans le serveur SMBv1 de Microsoft Windows.
+  - id: CVE-2020-1472
+    nom: Zerologon
+    description: Élévation de privilèges sur le protocole Netlogon permettant de prendre le contrôle du domaine.
+initial_vector: Serveur Windows non corrigé exposant SMBv1, atteint depuis un poste hameçonné
+attack_chain: [T1566.001, T1204.002, T1210, T1021.002, T1003.001, T1484.001, T1490, T1486]
+impact: {D: 4, I: 3, C: 2, T: 2}
+cout_min: 150000
+cout_max: 3500000
+duree_semaines: {min: 3, max: 10}
+phase_detection_semaines: {min: 0, max: 3}
+obligations_declenchees: [nis2_24h, lpm_24h, hds_signalement, cnil_72h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {utilisateurs: -6, partenaires: -4, presse: -6}
+mesures_cles: [M08, M09, M16, M06, M18, M04]
+references:
+  - "CERT-FR, CERTFR-2017-ALE-010 — Campagne de rançongiciel WannaCry"
+  - "Microsoft, bulletin de sécurité MS17-010 (14 mars 2017)"
+  - "ANSSI / Ministère de la Justice, Attaques par rançongiciels, tous concernés (2020)"
+  - "Guide d'hygiène informatique ANSSI, mesures 34 (correctifs) et 37 (sauvegardes)"
+rex: >
+  La propagation n'a été possible que parce que des systèmes n'avaient pas reçu un correctif
+  disponible depuis 2017 et que SMBv1 restait actif. La segmentation réseau et des sauvegardes
+  hors ligne testées déterminent l'ampleur des dégâts et la durée de reprise. La décision de
+  ne pas payer la rançon est conforme aux recommandations de l'ANSSI et des forces de l'ordre.
+messages:
+  detection:
+    - {de: "Support informatique", texte: "Plusieurs services signalent des fichiers renommés en .lock et une note « README_RESTORE.txt » sur leurs postes."}
+    - {de: "Exploitation", texte: "Le serveur de fichiers et deux contrôleurs de domaine ne répondent plus. Les clichés instantanés ont été supprimés."}
+  confinement:
+    - {de: "Équipe réseau", texte: "Nous pouvons couper les interconnexions entre sites et l'accès Internet en 10 minutes."}
+  eradication:
+    - {de: "Prestataire de réponse", texte: "L'analyse confirme une exploitation de MS17-010 puis une diffusion par stratégie de groupe."}
+  reprise:
+    - {de: "Direction", texte: "Quand pourrons-nous rouvrir les services essentiels ?"}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Responsable exploitation"
+    urgence: true
+    delai_secondes: 90
+    texte: >
+      Le chiffrement progresse de serveur en serveur. Que faites-vous immédiatement ?
+    choix:
+      - id: A
+        texte: Isoler le réseau (couper interconnexions et Internet) sans éteindre les machines
+        qualite: bonne
+        effets: {cout_mult: 0.75, reputation: {utilisateurs: -2}}
+        feedback: >
+          L'isolement réseau stoppe la propagation tout en préservant la mémoire vive des
+          machines, utile à l'investigation.
+        reference: "ANSSI, Attaques par rançongiciels, tous concernés — « Les bons réflexes »"
+      - id: B
+        texte: Éteindre brutalement tous les serveurs
+        qualite: moyenne
+        effets: {cout_mult: 0.9, duree_semaines: 1}
+        feedback: >
+          L'arrêt limite la propagation mais détruit des preuves en mémoire et peut corrompre
+          des bases de données en cours d'écriture.
+        reference: "Cybermalveillance.gouv.fr, fiche réflexe rançongiciel"
+      - id: C
+        texte: Attendre le diagnostic complet avant toute action
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.5, duree_semaines: 3, reputation: {utilisateurs: -4, partenaires: -3}}
+        feedback: >
+          Chaque heure perdue étend le périmètre chiffré. Le confinement doit précéder
+          l'analyse approfondie.
+        reference: "ANSSI, Crise d'origine cyber, les clés d'une gestion opérationnelle et stratégique (2021)"
+  - id: D2
+    heure: 4
+    phase: confinement
+    de: "Direction générale"
+    texte: >
+      La direction demande qui prévenir. Que recommandez-vous ?
+    choix:
+      - id: A
+        texte: Activer la cellule de crise, déposer plainte et prévenir les autorités compétentes
+        qualite: bonne
+        effets: {reputation: {regulateurs: 4}}
+        feedback: >
+          La plainte ouvre l'enquête judiciaire et conditionne l'indemnisation par l'assureur.
+          Le signalement précoce à l'ANSSI / CERT-FR permet d'obtenir un appui.
+        reference: "Code des assurances, art. L.12-10-1 ; NIS2 art. 23"
+      - id: B
+        texte: Gérer en interne et communiquer uniquement si l'information fuite
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {regulateurs: -6, presse: -6}}
+        feedback: >
+          L'opacité est presque toujours découverte et aggrave la crise de confiance ;
+          elle expose aussi à des manquements de notification.
+        reference: "RGPD art. 33 ; NIS2 art. 23"
+      - id: C
+        texte: Prévenir uniquement l'assureur
+        qualite: moyenne
+        effets: {reputation: {regulateurs: -2}}
+        feedback: >
+          L'assureur peut mobiliser des experts, mais ne remplace ni la plainte ni les
+          notifications réglementaires.
+        reference: "Code des assurances, art. L.12-10-1"
+  - id: D3
+    heure: 24
+    phase: eradication
+    de: "Négociateur de l'attaquant (via la note)"
+    texte: >
+      Les attaquants réclament 400 000 € en cryptomonnaie sous 72 h. Que décidez-vous ?
+    choix:
+      - id: A
+        texte: Refuser de payer et engager la restauration depuis les sauvegardes saines
+        qualite: bonne
+        effets: {cout_mult: 1.0}
+        feedback: >
+          Payer ne garantit ni le déchiffrement ni l'absence de nouvelle attaque, et finance
+          l'écosystème criminel. L'ANSSI et les forces de l'ordre recommandent de ne pas payer.
+        reference: "ANSSI / Ministère de la Justice, Attaques par rançongiciels, tous concernés (2020)"
+      - id: B
+        texte: Payer la rançon pour reprendre l'activité plus vite
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_fixe: 400000, cout_mult: 0.9, reputation: {presse: -8, regulateurs: -4}, risque: [{type: ransomware, facteur: 1.6, semaines: 52}]}
+        feedback: >
+          Une organisation qui a payé est souvent ciblée à nouveau. Le déchiffreur est
+          fréquemment lent ou défaillant.
+        reference: "ANSSI, Panorama de la cybermenace 2024"
+      - id: C
+        texte: Faire traîner la négociation pour gagner du temps pendant la restauration
+        qualite: moyenne
+        effets: {cout_mult: 0.95, reputation: {presse: -1}}
+        feedback: >
+          Tactique parfois utilisée par les spécialistes, mais à confier à des professionnels
+          et sans engagement de paiement.
+        reference: "Cybermalveillance.gouv.fr, fiche réflexe rançongiciel"
+  - id: D4
+    heure: 72
+    phase: reprise
+    de: "DSI"
+    texte: >
+      Les sauvegardes sont disponibles. Comment organisez-vous la reprise ?
+    choix:
+      - id: A
+        texte: Reconstruire l'annuaire et les serveurs sur un socle sain, corrigé et durci, par ordre de priorité métier
+        qualite: bonne
+        effets: {duree_semaines: 1, reputation: {partenaires: 3}, risque: [{type: ransomware, facteur: 0.7, semaines: 52}]}
+        feedback: >
+          Reconstruire sur des bases saines évite la réinfection ; la priorisation métier
+          permet de rouvrir d'abord les services vitaux.
+        reference: "ANSSI, Remédiation de l'Active Directory (2023)"
+      - id: B
+        texte: Restaurer à l'identique au plus vite
+        qualite: mauvaise
+        defaut: true
+        effets: {duree_semaines: -1, risque: [{type: ransomware, facteur: 1.8, semaines: 26}]}
+        feedback: >
+          Restaurer sans corriger la vulnérabilité ni changer les secrets compromis expose à
+          une réinfection quasi immédiate.
+        reference: "ANSSI, Remédiation de l'Active Directory (2023)"
+      - id: C
+        texte: Corriger MS17-010 et désactiver SMBv1, puis restaurer progressivement
+        qualite: moyenne
+        effets: {reputation: {partenaires: 1}, risque: [{type: ransomware, facteur: 0.85, semaines: 52}]}
+        feedback: >
+          Bon réflexe sur la vulnérabilité initiale, mais les comptes privilégiés compromis
+          doivent aussi être réinitialisés.
+        reference: "Guide d'hygiène informatique ANSSI, mesures 21 et 34"

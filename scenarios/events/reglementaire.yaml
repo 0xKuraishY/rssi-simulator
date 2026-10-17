@@ -1,0 +1,365 @@
+# Licence des contenus : CC BY-SA 4.0
+categorie: reglementaire
+evenements:
+  - id: EVT-REG-01
+    titre: Rappel de l'enregistrement NIS2
+    de: "ANSSI"
+    description: >
+      L'ANSSI rappelle aux entités concernées par la directive NIS2 qu'elles doivent se
+      faire connaître et fournir leurs informations d'identification et de contact via son
+      service en ligne dédié. Votre organisation n'a pas encore effectué cette démarche.
+    probabilite_semaine: 0.025
+    organisations: [hopital, mairie, esn, telecom]
+    unique: true
+    annee_min: 1
+    tour_min: 2
+    choix:
+      - id: A
+        texte: Vérifier l'assujettissement et procéder à l'enregistrement sans attendre
+        qualite: bonne
+        effets:
+          reputation: {regulateurs: 3}
+          conformite: [nis2_enregistrement]
+        feedback: >
+          L'enregistrement est la première obligation, simple et gratuite, et conditionne la
+          relation avec l'autorité nationale. Il permet aussi de recevoir les informations
+          adressées aux entités régulées.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 3 et 27 ; ANSSI, MonEspaceNIS2"
+      - id: B
+        texte: Attendre la publication de tous les textes d'application
+        qualite: moyenne
+        effets:
+          reputation: {regulateurs: -1}
+        feedback: >
+          Attendre ne réduit pas le travail à mener, et l'organisation se prive des
+          informations et de l'accompagnement proposés aux entités enregistrées.
+        reference: "ANSSI, MonEspaceNIS2"
+      - id: C
+        texte: Ignorer le rappel, l'organisation n'est sans doute pas concernée
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -4}
+        feedback: >
+          Présumer sans vérifier est risqué : les critères de secteur et de taille de NIS2
+          couvrent un nombre bien plus large d'entités que la directive précédente.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 2 et 3"
+
+  - id: EVT-REG-02
+    titre: Questionnaire sécurité d'un client grand compte
+    de: "Client grand compte"
+    description: >
+      Un client stratégique vous adresse un questionnaire de sécurité de deux cents questions
+      et indique qu'à terme il exigera de ses fournisseurs une certification ISO/IEC 27001.
+      La réponse conditionne le renouvellement du contrat.
+    probabilite_semaine: 0.02
+    organisations: [pme_industrie, esn]
+    unique: true
+    annee_min: 1
+    tour_min: 6
+    choix:
+      - id: A
+        texte: Répondre avec des éléments de preuve et présenter une feuille de route vers la certification
+        qualite: bonne
+        effets:
+          cout: 4000
+          categorie: audit
+          reputation: {partenaires: 4}
+          budget_annuel: 0.03
+        feedback: >
+          Les donneurs d'ordre répercutent leurs propres obligations sur leurs fournisseurs.
+          Une réponse étayée et un calendrier réaliste vers la certification valent mieux
+          qu'une conformité affichée mais non démontrable.
+        reference: "ISO/IEC 27001:2022 ; Directive (UE) 2022/2555 (NIS2), art. 21"
+      - id: B
+        texte: Répondre « oui » à toutes les questions pour sécuriser le contrat
+        qualite: mauvaise
+        effets:
+          reputation: {partenaires: -3}
+          risque: [{type: supply_chain, facteur: 1.2, semaines: 26}]
+        feedback: >
+          Une déclaration inexacte engage la responsabilité de l'organisation et sera
+          découverte au premier audit ou au premier incident.
+        reference: "ISO/IEC 27001:2022"
+      - id: C
+        texte: Répondre honnêtement sans proposer de plan d'amélioration
+        qualite: moyenne
+        effets:
+          reputation: {partenaires: -1}
+        feedback: >
+          La sincérité est indispensable mais, sans engagement d'amélioration, le client risque
+          de se tourner vers un concurrent.
+        reference: "ISO/IEC 27001:2022"
+
+  - id: EVT-REG-03
+    titre: Demande d'accès RGPD complexe
+    de: "Délégué à la protection des données"
+    description: >
+      Un ancien salarié, en litige avec l'organisation, exerce son droit d'accès et demande
+      la copie de toutes les données le concernant, y compris ses courriels et les journaux
+      de connexion. Les données sont dispersées dans une dizaine d'applications.
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 4
+    choix:
+      - id: A
+        texte: Accuser réception, rechercher les données avec le DPO et répondre dans le délai légal en protégeant les droits des tiers
+        qualite: bonne
+        effets:
+          cout: 2000
+          categorie: divers
+          reputation: {regulateurs: 2}
+        feedback: >
+          Le responsable de traitement dispose d'un mois, prolongeable de deux mois compte tenu
+          de la complexité, en informant la personne. La copie ne doit pas porter atteinte aux
+          droits d'autrui.
+        reference: "RGPD, art. 12 et 15"
+      - id: B
+        texte: Ne transmettre que les données de la fiche RH
+        qualite: moyenne
+        effets:
+          reputation: {regulateurs: -2}
+        feedback: >
+          Le droit d'accès porte sur l'ensemble des données personnelles traitées, pas sur un
+          seul fichier. Une réponse partielle peut donner lieu à une plainte auprès de la CNIL.
+        reference: "RGPD, art. 15"
+      - id: C
+        texte: Refuser au motif du litige en cours
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -5}
+          amende: 3000
+        feedback: >
+          L'existence d'un litige ne suffit pas à justifier un refus. La CNIL sanctionne
+          régulièrement les manquements au droit d'accès.
+        reference: "RGPD, art. 12 et 15 ; CNIL, fiche « Le droit d'accès »"
+
+  - id: EVT-REG-04
+    titre: Registre des traitements à mettre à jour
+    de: "Délégué à la protection des données"
+    description: >
+      Le DPO constate que le registre des traitements n'a pas été mis à jour depuis le
+      déploiement de plusieurs nouvelles applications et demande l'appui de la sécurité pour
+      documenter les mesures techniques et organisationnelles.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 3
+    choix:
+      - id: A
+        texte: Organiser avec le DPO une revue avec chaque métier et décrire les mesures de sécurité
+        qualite: bonne
+        effets:
+          cout: 1500
+          categorie: divers
+          reputation: {regulateurs: 2}
+          conformite: [registre]
+        feedback: >
+          Le registre doit refléter les traitements réels et décrire, lorsque c'est possible,
+          les mesures de sécurité techniques et organisationnelles. C'est le premier document
+          demandé lors d'un contrôle.
+        reference: "RGPD, art. 30"
+      - id: B
+        texte: Laisser le DPO s'en charger seul
+        qualite: moyenne
+        effets: {}
+        feedback: >
+          Le DPO ne connaît pas toutes les mesures techniques. Le registre restera incomplet
+          sur la partie sécurité.
+        reference: "RGPD, art. 30 et 39"
+      - id: C
+        texte: Reporter, la sécurité a d'autres priorités
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -2}
+        feedback: >
+          Un registre obsolète empêche de savoir quelles données sont touchées en cas d'incident
+          et constitue un manquement en soi.
+        reference: "RGPD, art. 30"
+
+  - id: EVT-REG-05
+    titre: Audit de l'hébergeur de données de santé
+    de: "Direction des achats"
+    description: >
+      Le dossier patient informatisé doit migrer vers un nouvel hébergeur externe. Le
+      contrat est prêt à être signé, mais personne n'a vérifié la certification de
+      l'hébergeur ni son périmètre.
+    probabilite_semaine: 0.02
+    organisations: [hopital]
+    unique: true
+    annee_min: 1
+    tour_min: 4
+    choix:
+      - id: A
+        texte: Vérifier le certificat HDS, son périmètre et les clauses contractuelles obligatoires avant signature
+        qualite: bonne
+        effets:
+          cout: 2500
+          categorie: audit
+          reputation: {regulateurs: 3}
+          conformite: [hds_hebergeur]
+        feedback: >
+          L'hébergement de données de santé pour le compte d'un tiers impose un hébergeur
+          certifié HDS pour les activités concernées. Le certificat doit couvrir les prestations
+          réellement achetées.
+        reference: "Code de la santé publique, art. L.1111-8 ; référentiel de certification HDS"
+      - id: B
+        texte: Se contenter de l'attestation fournie par le commercial
+        qualite: moyenne
+        effets:
+          risque: [{type: fuite_donnees, facteur: 1.1, semaines: 26}]
+        feedback: >
+          Une attestation commerciale ne précise pas toujours le périmètre certifié. La
+          vérification du certificat et de sa validité reste nécessaire.
+        reference: "Code de la santé publique, art. L.1111-8"
+      - id: C
+        texte: Signer immédiatement, le calendrier de migration est serré
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -4}
+          risque: [{type: fuite_donnees, facteur: 1.4, semaines: 26}]
+        feedback: >
+          Confier des données de santé à un hébergeur non certifié expose l'établissement à
+          un manquement réglementaire et à des garanties de sécurité insuffisantes.
+        reference: "Code de la santé publique, art. L.1111-8"
+
+  - id: EVT-REG-06
+    titre: Homologation des systèmes d'information d'importance vitale
+    de: "ANSSI"
+    description: >
+      En tant qu'opérateur d'importance vitale, vous devez homologuer vos systèmes
+      d'information d'importance vitale (SIIV) selon les règles fixées par l'arrêté
+      sectoriel. Plusieurs SIIV déclarés ne disposent pas encore de décision d'homologation.
+    probabilite_semaine: 0.02
+    organisations: [telecom]
+    unique: true
+    annee_min: 1
+    tour_min: 6
+    choix:
+      - id: A
+        texte: Lancer la démarche d'homologation avec un audit par un prestataire qualifié
+        qualite: bonne
+        effets:
+          cout: 25000
+          categorie: audit
+          reputation: {regulateurs: 5}
+          conformite: [lpm_homologation]
+        feedback: >
+          L'homologation formalise l'acceptation des risques résiduels par l'autorité
+          responsable, sur la base d'une analyse de risques et d'un audit. C'est une
+          obligation pour les SIIV.
+        reference: "Code de la défense, art. L.1332-6-1 ; arrêtés sectoriels pris pour son application"
+      - id: B
+        texte: Rédiger un dossier d'homologation interne sans audit
+        qualite: moyenne
+        effets:
+          cout: 5000
+          categorie: audit
+          reputation: {regulateurs: -1}
+        feedback: >
+          Un dossier sans audit ne permet pas d'apprécier réellement les risques résiduels et
+          ne répond pas aux exigences des règles applicables aux SIIV.
+        reference: "Code de la défense, art. L.1332-6-1"
+      - id: C
+        texte: Reporter à l'année prochaine, faute de ressources
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -6}
+        feedback: >
+          Les manquements des opérateurs d'importance vitale à leurs obligations de sécurité
+          peuvent être sanctionnés et relevés lors des contrôles de l'ANSSI.
+        reference: "Code de la défense, art. L.1332-6-1 et suivants"
+
+  - id: EVT-REG-07
+    titre: Analyse d'impact avant le déploiement de la vidéoprotection
+    de: "Cabinet du maire"
+    description: >
+      Le conseil municipal a voté l'extension du dispositif de vidéoprotection sur la voie
+      publique. Les élus souhaitent une mise en service rapide, avant les festivités de l'été.
+    probabilite_semaine: 0.02
+    organisations: [mairie]
+    unique: true
+    annee_min: 1
+    tour_min: 5
+    choix:
+      - id: A
+        texte: Mener l'analyse d'impact avec le DPO et sécuriser le système avant la mise en service
+        qualite: bonne
+        effets:
+          cout: 3000
+          categorie: audit
+          reputation: {regulateurs: 3, utilisateurs: 1}
+          conformite: [registre]
+        feedback: >
+          La surveillance systématique à grande échelle d'une zone accessible au public fait
+          partie des cas où une analyse d'impact est requise. Elle s'ajoute à l'autorisation
+          préfectorale prévue par le Code de la sécurité intérieure.
+        reference: "RGPD, art. 35 §3 c) ; Code de la sécurité intérieure, art. L.251-1 et suivants"
+      - id: B
+        texte: Mettre en service et rédiger l'analyse d'impact ensuite
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -3}
+          risque: [{type: fuite_donnees, facteur: 1.2, semaines: 26}]
+        feedback: >
+          L'analyse d'impact doit être menée avant la mise en œuvre du traitement : elle sert
+          à dimensionner les mesures, pas à justifier a posteriori.
+        reference: "RGPD, art. 35"
+      - id: C
+        texte: Confier l'analyse d'impact à l'installateur des caméras
+        qualite: moyenne
+        effets:
+          cout: 1000
+          categorie: externalisation
+        feedback: >
+          L'installateur peut contribuer, mais l'analyse d'impact relève du responsable de
+          traitement, qui doit demander l'avis du DPO.
+        reference: "RGPD, art. 35 §1 et §2"
+
+  - id: EVT-REG-08
+    titre: Formation des dirigeants à la cybersécurité
+    de: "ANSSI"
+    description: >
+      Un rappel de l'autorité souligne que les organes de direction des entités régulées
+      doivent suivre une formation en cybersécurité et approuver les mesures de gestion des
+      risques. Votre comité de direction n'a jamais été formé.
+    probabilite_semaine: 0.02
+    organisations: [hopital, mairie, esn, telecom]
+    unique: true
+    annee_min: 1
+    tour_min: 8
+    choix:
+      - id: A
+        texte: Organiser une session de formation du comité de direction avec mise en situation de crise
+        qualite: bonne
+        effets:
+          cout: 4000
+          categorie: formation
+          reputation: {regulateurs: 3}
+          conformite: [nis2_gouvernance]
+          budget_annuel: 0.02
+        feedback: >
+          NIS2 responsabilise les dirigeants : ils approuvent les mesures, en supervisent la
+          mise en œuvre et doivent être formés. Des dirigeants sensibilisés soutiennent
+          davantage la sécurité et décident mieux en crise.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 20"
+      - id: B
+        texte: Leur transmettre un support écrit à lire
+        qualite: moyenne
+        effets:
+          reputation: {regulateurs: 1}
+        feedback: >
+          Un document diffusé sans échange ni mise en situation a peu d'effet et ne démontre
+          pas que la formation a réellement eu lieu.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 20"
+      - id: C
+        texte: Ne pas solliciter la direction, déjà très occupée
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -3}
+        feedback: >
+          La gouvernance de la cybersécurité ne se délègue pas entièrement au RSSI : les
+          dirigeants peuvent voir leur responsabilité engagée en cas de manquement.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 20"

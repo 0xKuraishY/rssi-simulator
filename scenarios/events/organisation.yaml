@@ -1,0 +1,362 @@
+# Licence des contenus : CC BY-SA 4.0
+categorie: organisation
+evenements:
+  - id: EVT-ORG-01
+    titre: Coupe demandée dans le budget de formation
+    de: "Direction générale"
+    description: >
+      Pour tenir les objectifs d'économies, la direction propose de supprimer la campagne de
+      sensibilisation prévue cette année : « le personnel a déjà été formé il y a deux ans ».
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 6
+    choix:
+      - id: A
+        texte: Défendre la campagne chiffres à l'appui, en proposant un format allégé et les ressources gratuites existantes
+        qualite: bonne
+        effets:
+          cout: 1000
+          categorie: formation
+          reputation: {utilisateurs: 1}
+          risque: [{type: phishing, facteur: 0.9, semaines: 26}]
+        feedback: >
+          La sensibilisation s'érode vite et doit être entretenue. Des ressources publiques
+          gratuites permettent de maintenir l'effort à faible coût tout en donnant satisfaction
+          à la direction.
+        reference: "Cybermalveillance.gouv.fr, kit de sensibilisation ; ANSSI, Guide d'hygiène informatique"
+      - id: B
+        texte: Accepter la suppression pour cette année
+        qualite: mauvaise
+        effets:
+          budget_rallonge: -2000
+          categorie: formation
+          risque: [{type: phishing, facteur: 1.4, semaines: 52}]
+        feedback: >
+          L'hameçonnage reste un vecteur d'entrée majeur. Une économie de quelques milliers
+          d'euros peut se payer d'un incident bien plus coûteux.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: C
+        texte: Reporter la décision et mener une simulation d'hameçonnage pour objectiver le besoin
+        qualite: moyenne
+        effets:
+          cout: 1500
+          categorie: formation
+          risque: [{type: phishing, facteur: 1.1, semaines: 26}]
+        feedback: >
+          Mesurer est utile pour convaincre, mais une simulation seule, sans formation qui suit,
+          n'améliore pas durablement les comportements.
+        reference: "Cybermalveillance.gouv.fr, kit de sensibilisation"
+
+  - id: EVT-ORG-02
+    titre: Départ d'un administrateur clé sans passation
+    de: "Ressources humaines"
+    description: >
+      L'administrateur système principal quitte l'organisation à la fin de la semaine, en
+      conflit avec sa hiérarchie. Il détient de nombreux comptes à privilèges et une partie
+      de la documentation n'existe que « dans sa tête ».
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 5
+    choix:
+      - id: A
+        texte: Inventorier et révoquer ses accès dès son départ, changer les secrets partagés et organiser une passation encadrée
+        qualite: bonne
+        effets:
+          cout: 4000
+          categorie: externalisation
+          reputation: {regulateurs: 1}
+          risque: [{type: initie, facteur: 0.8, semaines: 26}]
+        feedback: >
+          Une procédure de départ doit retirer tous les accès, y compris les comptes de service
+          et mots de passe partagés. Un renfort temporaire limite la perte de connaissance.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: B
+        texte: Désactiver son compte nominatif et voir ensuite pour le reste
+        qualite: moyenne
+        effets:
+          risque: [{type: initie, facteur: 1.4, semaines: 26}]
+        feedback: >
+          Les comptes génériques, clés et mots de passe partagés restent connus de la personne
+          partie : son compte nominatif n'est qu'une partie de ses accès.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: C
+        texte: Lui faire confiance et laisser ses accès quelques semaines pour qu'il puisse dépanner
+        qualite: mauvaise
+        effets:
+          risque: [{type: initie, facteur: 2.0, semaines: 26}, {type: ransomware, facteur: 1.2, semaines: 26}]
+        feedback: >
+          Laisser des accès privilégiés à une personne partie, a fortiori en conflit, expose à
+          un acte malveillant ou à une compromission de ces comptes non surveillés.
+        reference: "ANSSI, Guide d'hygiène informatique"
+
+  - id: EVT-ORG-03
+    titre: Accès distant urgent pour un prestataire
+    de: "Directeur de projet"
+    description: >
+      Un projet métier prioritaire est en retard. Le chef de projet demande d'ouvrir dès
+      demain un accès à distance direct (bureau à distance exposé sur Internet) pour que
+      l'éditeur puisse intervenir sur un serveur de production.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 4
+    choix:
+      - id: A
+        texte: Proposer un accès via le VPN avec MFA, compte nominatif, durée limitée et journalisation
+        qualite: bonne
+        effets:
+          cout: 1500
+          categorie: outils
+          reputation: {partenaires: 1}
+          risque: [{type: supply_chain, facteur: 0.9, semaines: 12}]
+        feedback: >
+          Le besoin est légitime ; c'est le moyen qui doit être maîtrisé. Un accès nominatif,
+          authentifié fortement, limité dans le temps et tracé répond au projet sans exposer
+          un service d'administration sur Internet.
+        reference: "ANSSI, Recommandations relatives à l'administration sécurisée des systèmes d'information"
+      - id: B
+        texte: Refuser tout accès distant au prestataire
+        qualite: moyenne
+        effets:
+          reputation: {partenaires: -2, utilisateurs: -2}
+        feedback: >
+          Le refus protège, mais bloque un projet métier et incite les équipes à contourner la
+          sécurité. Le rôle du RSSI est de proposer une solution acceptable.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: C
+        texte: Accepter l'ouverture du bureau à distance sur Internet, à titre temporaire
+        qualite: mauvaise
+        effets:
+          risque: [{type: ransomware, facteur: 1.8, semaines: 16}, {type: supply_chain, facteur: 1.5, semaines: 16}]
+        feedback: >
+          Les services de bureau à distance exposés sont parmi les vecteurs d'entrée les plus
+          exploités par les groupes de rançongiciel, et le « temporaire » a tendance à durer.
+        reference: "ANSSI, Guide d'hygiène informatique"
+
+  - id: EVT-ORG-04
+    titre: Projet de mutualisation avec une autre structure
+    de: "Direction générale"
+    description: >
+      La direction annonce un rapprochement avec une structure voisine : mutualisation des
+      services supports et interconnexion des réseaux d'ici six mois. Le niveau de sécurité
+      du partenaire est inconnu.
+    probabilite_semaine: 0.01
+    organisations: []
+    unique: true
+    annee_min: 2
+    tour_min: 1
+    choix:
+      - id: A
+        texte: Exiger une analyse de risques et un audit du partenaire avant toute interconnexion, avec un filtrage strict
+        qualite: bonne
+        effets:
+          cout: 6000
+          categorie: audit
+          reputation: {partenaires: 2, regulateurs: 2}
+          risque: [{type: supply_chain, facteur: 0.9, semaines: 26}]
+        feedback: >
+          Interconnecter deux systèmes, c'est hériter des faiblesses de l'autre. Une analyse de
+          risques préalable et un cloisonnement des flux évitent qu'une compromission se
+          propage d'une structure à l'autre.
+        reference: "ANSSI, guide EBIOS Risk Manager ; ANSSI, Guide d'hygiène informatique"
+      - id: B
+        texte: Interconnecter les réseaux d'abord, sécuriser ensuite
+        qualite: mauvaise
+        effets:
+          risque: [{type: ransomware, facteur: 1.5, semaines: 26}, {type: supply_chain, facteur: 1.5, semaines: 26}]
+        feedback: >
+          Une fusion de réseaux sans cloisonnement crée un domaine de propagation unique.
+          Corriger après coup est bien plus coûteux.
+        reference: "ANSSI, Guide d'hygiène informatique"
+      - id: C
+        texte: Demander au partenaire de remplir un questionnaire déclaratif
+        qualite: moyenne
+        effets:
+          risque: [{type: supply_chain, facteur: 1.2, semaines: 26}]
+        feedback: >
+          Un questionnaire donne une première image mais n'apporte aucune vérification. Il ne
+          remplace ni l'audit ni le cloisonnement.
+        reference: "ANSSI, guide EBIOS Risk Manager"
+
+  - id: EVT-ORG-05
+    titre: Un dirigeant demande une dérogation à la MFA
+    de: "Membre du comité de direction"
+    description: >
+      Un membre du comité de direction juge l'authentification multifacteur « trop
+      contraignante » en déplacement et demande qu'elle soit désactivée sur son compte de
+      messagerie.
+    probabilite_semaine: 0.02
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 3
+    choix:
+      - id: A
+        texte: Refuser la dérogation et lui proposer une méthode plus ergonomique (clé de sécurité ou notification)
+        qualite: bonne
+        effets:
+          cout: 300
+          categorie: outils
+          reputation: {utilisateurs: -1}
+          risque: [{type: compromission_cloud, facteur: 0.9, semaines: 26}]
+        feedback: >
+          Les comptes de dirigeants sont des cibles privilégiées (fraude au président,
+          compromission de messagerie). Améliorer l'ergonomie plutôt que supprimer la protection
+          préserve la sécurité et la relation.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe"
+      - id: B
+        texte: Accorder une dérogation limitée aux pays de confiance
+        qualite: moyenne
+        effets:
+          risque: [{type: compromission_cloud, facteur: 1.3, semaines: 26}, {type: phishing, facteur: 1.1, semaines: 26}]
+        feedback: >
+          Le filtrage géographique est contournable par un attaquant passant par une
+          infrastructure locale. La protection est affaiblie sur le compte le plus exposé.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe"
+      - id: C
+        texte: Désactiver la MFA sur son compte
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -2}
+          risque: [{type: compromission_cloud, facteur: 2.0, semaines: 26}, {type: phishing, facteur: 1.4, semaines: 26}]
+        feedback: >
+          Une exception pour un dirigeant affaiblit la règle pour tous et expose précisément le
+          compte que les fraudeurs ciblent en priorité.
+        reference: "ANSSI, Recommandations relatives à l'authentification multifacteur et aux mots de passe"
+
+  - id: EVT-ORG-06
+    titre: Renouvellement du contrat d'infogérance
+    de: "Service des achats"
+    description: >
+      Le contrat d'infogérance arrive à échéance. Les achats proposent de reconduire à
+      l'identique, sans clause de sécurité, au motif que l'offre est la moins chère.
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 10
+    choix:
+      - id: A
+        texte: Intégrer un plan d'assurance sécurité, des clauses de notification d'incident, de réversibilité et d'audit
+        qualite: bonne
+        effets:
+          cout: 2000
+          categorie: externalisation
+          reputation: {partenaires: 1, regulateurs: 2}
+          risque: [{type: supply_chain, facteur: 0.8, semaines: 52}]
+        feedback: >
+          Le contrat est le principal levier du donneur d'ordre sur son prestataire. Un plan
+          d'assurance sécurité, un droit d'audit et un délai de notification des incidents sont
+          les clauses de base.
+        reference: "ANSSI, Maîtriser les risques de l'infogérance ; RGPD, art. 28"
+      - id: B
+        texte: Reconduire à l'identique et traiter la sécurité au prochain renouvellement
+        qualite: mauvaise
+        effets:
+          risque: [{type: supply_chain, facteur: 1.5, semaines: 52}]
+        feedback: >
+          Sans obligation contractuelle, vous ne pourrez ni exiger de mesures ni être informé à
+          temps d'un incident chez le prestataire.
+        reference: "ANSSI, Maîtriser les risques de l'infogérance"
+      - id: C
+        texte: Ajouter une simple clause générale de « respect des bonnes pratiques »
+        qualite: moyenne
+        effets:
+          risque: [{type: supply_chain, facteur: 1.2, semaines: 52}]
+        feedback: >
+          Une clause vague est difficilement opposable. Les exigences doivent être précises et
+          vérifiables.
+        reference: "ANSSI, Maîtriser les risques de l'infogérance"
+
+  - id: EVT-ORG-07
+    titre: Rallonge budgétaire conditionnée à un plan
+    de: "Direction financière"
+    description: >
+      Après la médiatisation d'attaques dans votre secteur, la direction financière se dit
+      prête à débloquer des moyens supplémentaires, à condition de recevoir sous quinze jours
+      un plan d'action priorisé avec des indicateurs de suivi.
+    probabilite_semaine: 0.015
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 8
+    choix:
+      - id: A
+        texte: Présenter un plan fondé sur l'analyse de risques, priorisé, chiffré et assorti d'indicateurs
+        qualite: bonne
+        effets:
+          budget_rallonge: 10000
+          budget_annuel: 0.05
+          categorie: divers
+          reputation: {regulateurs: 1}
+        feedback: >
+          Un plan relié aux risques métier et suivi par des indicateurs parle aux décideurs ;
+          il installe la sécurité dans la durée plutôt que dans l'urgence.
+        reference: "ANSSI et AMRAE, Maîtrise du risque numérique — l'atout confiance"
+      - id: B
+        texte: Transmettre la liste des outils que vous souhaitez acheter
+        qualite: moyenne
+        effets:
+          budget_rallonge: 4000
+          categorie: outils
+        feedback: >
+          Une liste d'achats sans lien avec les risques convainc mal et laisse de côté
+          l'organisation, les processus et les compétences.
+        reference: "ANSSI et AMRAE, Maîtrise du risque numérique — l'atout confiance"
+      - id: C
+        texte: Décliner, faute de temps pour rédiger le plan
+        qualite: mauvaise
+        effets:
+          reputation: {regulateurs: -1}
+        feedback: >
+          Les fenêtres d'opportunité budgétaire sont rares. Savoir présenter un plan aux
+          décideurs fait partie intégrante du rôle de RSSI.
+        reference: "ANSSI et AMRAE, Maîtrise du risque numérique — l'atout confiance"
+
+  - id: EVT-ORG-08
+    titre: Généralisation soudaine du télétravail
+    de: "Direction générale"
+    description: >
+      En raison de travaux majeurs dans les locaux, la direction annonce que la majorité du
+      personnel travaillera à distance pendant trois mois, à compter de la semaine prochaine.
+    probabilite_semaine: 0.01
+    organisations: []
+    unique: true
+    annee_min: 1
+    tour_min: 6
+    choix:
+      - id: A
+        texte: Dimensionner le VPN avec MFA, fournir des postes maîtrisés et diffuser des consignes de télétravail
+        qualite: bonne
+        effets:
+          cout: 6000
+          categorie: outils
+          reputation: {utilisateurs: 1}
+          risque: [{type: vpn_exploit, facteur: 1.1, semaines: 12}]
+        feedback: >
+          Le travail à distance élargit la surface d'attaque. Des accès authentifiés fortement,
+          des postes gérés et à jour et des consignes simples maintiennent le niveau de sécurité.
+        reference: "ANSSI, Recommandations sur le nomadisme numérique"
+      - id: B
+        texte: Autoriser l'usage des ordinateurs personnels via un accès web à la messagerie
+        qualite: moyenne
+        effets:
+          risque: [{type: compromission_cloud, facteur: 1.4, semaines: 12}, {type: fuite_donnees, facteur: 1.2, semaines: 12}]
+        feedback: >
+          Les postes personnels ne sont ni maîtrisés ni mis à jour par l'organisation ; les
+          données professionnelles peuvent y être exposées.
+        reference: "ANSSI, Recommandations sur le nomadisme numérique"
+      - id: C
+        texte: Ouvrir les applications métier directement sur Internet pour simplifier
+        qualite: mauvaise
+        effets:
+          risque: [{type: ransomware, facteur: 1.7, semaines: 12}, {type: vpn_exploit, facteur: 1.5, semaines: 12}]
+        feedback: >
+          Exposer des applications internes sans protection supplémentaire les livre aux
+          balayages automatisés des attaquants.
+        reference: "ANSSI, Recommandations sur le nomadisme numérique"

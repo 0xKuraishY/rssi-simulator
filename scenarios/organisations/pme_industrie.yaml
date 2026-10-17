@@ -1,0 +1,57 @@
+# Licence des contenus : CC BY-SA 4.0 — organisation fictive, données de calibrage pédagogiques
+id: pme_industrie
+nom: Mécaprécis SAS
+type_label: PME industrielle 180 salariés
+secteur: industrie
+taille_employes: 180
+postes_travail: 150
+equipe_ssi: 1
+budget_it: 320000
+budget_ssi: 19200
+chiffre_affaires: 35000000
+difficulte: 2
+taux_clic_initial: 0.22   # part du personnel cliquant sur un faux hameçonnage (calibrage pédagogique)
+contraintes_reglementaires: [RGPD, Exigences clients ISO/IEC 27001]
+regimes: {rgpd: true, nis2: null, hds: false, lpm_oiv: false, iso27001: true}
+traitement_grande_echelle: false
+facteur_cout: 0.12
+plafond_assurance: 1000000
+contrat_majeur: le contrat-cadre avec le principal donneur d'ordre aéronautique
+description: >
+  Sous-traitant de mécanique de précision pour l'aéronautique et le ferroviaire. Une usine,
+  des machines-outils à commande numérique pilotées depuis le réseau, un ERP et des plans
+  clients confidentiels. Le budget sécurité est très contraint et les clients exigent une
+  démarche ISO 27001.
+enjeux:
+  - "Propriété intellectuelle (plans et procédés) convoitée par des concurrents."
+  - "Arrêt de production : chaque jour perdu coûte des pénalités contractuelles."
+  - "Fraude au faux ordre de virement : cible classique des PME."
+  - "Exigences de sécurité des donneurs d'ordre (questionnaires, ISO 27001)."
+valeurs_metier:
+  - "Production et livraison des pièces dans les délais"
+  - "Protection des plans et savoir-faire"
+  - "Trésorerie et relation bancaire"
+assets_critiques:
+  - {id: erp, nom: ERP (production, achats, facturation), type: Application, criticite: primaire, dict: {D: 4, I: 4, C: 3, T: 3}}
+  - {id: cao, nom: Plans CAO et propriété intellectuelle, type: Données, criticite: primaire, dict: {D: 2, I: 3, C: 4, T: 2}}
+  - {id: production, nom: Automates et machines-outils (OT), type: Matériel, criticite: primaire, dict: {D: 4, I: 4, C: 2, T: 2}}
+  - {id: ad, nom: Annuaire Active Directory, type: Infrastructure, criticite: primaire, dict: {D: 3, I: 4, C: 3, T: 3}}
+  - {id: messagerie, nom: Messagerie Microsoft 365, type: Service, criticite: secondaire, dict: {D: 2, I: 3, C: 3, T: 2}}
+  - {id: fichiers, nom: Serveur de fichiers, type: Infrastructure, criticite: secondaire, dict: {D: 2, I: 3, C: 3, T: 2}}
+  - {id: telemaintenance, nom: Accès de télémaintenance des fournisseurs machines, type: Réseau, criticite: secondaire, dict: {D: 2, I: 3, C: 2, T: 3}}
+  - {id: site, nom: Site vitrine, type: Service, criticite: secondaire, dict: {D: 1, I: 2, C: 1, T: 1}}
+probabilites_incidents:
+  ransomware: 0.18
+  phishing: 0.25
+  fuite_donnees: 0.04
+  supply_chain: 0.05
+  vpn_exploit: 0.08
+  ddos: 0.02
+  initie: 0.06
+  double_extorsion: 0.12
+  compromission_cloud: 0.10
+  ot_iot: 0.06
+socle_hygiene: [10, 14, 17, 26]
+mesures_initiales: [M07]
+iso_avancement_initial: 25
+exposition: {internet: 2, ecosysteme: 3, interne: 2, physique: 2}

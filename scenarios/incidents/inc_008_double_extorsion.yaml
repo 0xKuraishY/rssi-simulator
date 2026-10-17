@@ -1,0 +1,190 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-008
+type: double_extorsion
+title: Rançongiciel à double extorsion après vol de session sur la passerelle d'accès
+description: >
+  Un affilié d'un groupe de rançongiciel exploite une fuite de mémoire de la passerelle
+  d'accès distant pour récupérer des jetons de session valides, sans mot de passe ni MFA.
+  Il s'installe dans le réseau, exfiltre plusieurs centaines de gigaoctets de données puis
+  chiffre les serveurs. L'organisation apparaît sur le site vitrine du groupe avec un
+  compte à rebours avant publication des données volées.
+based_on: >
+  Exploitation de la vulnérabilité « Citrix Bleed » (CVE-2023-4966) à partir de l'été 2023,
+  notamment par des affiliés de LockBit 3.0 contre de grandes organisations fin 2023 ; la
+  double extorsion (vol puis chiffrement, menace de publication) est devenue le mode
+  opératoire dominant des groupes de rançongiciel.
+cve_references:
+  - id: CVE-2023-4966
+    nom: Citrix Bleed (NetScaler ADC / NetScaler Gateway)
+    description: >
+      Divulgation d'informations en mémoire permettant de dérober des jetons de session
+      authentifiés et de contourner l'authentification, y compris multifacteur.
+initial_vector: Passerelle NetScaler non corrigée, détournement de sessions authentifiées
+attack_chain: [T1190, T1550.004, T1059.001, T1219, T1003.001, T1021.001, T1560.001, T1567.002, T1490, T1486, T1657]
+impact: {D: 4, I: 3, C: 4, T: 3}
+cout_min: 200000
+cout_max: 4000000
+duree_semaines: {min: 3, max: 12}
+phase_detection_semaines: {min: 0, max: 4}
+obligations_declenchees: [nis2_24h, lpm_24h, hds_signalement, cnil_72h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {utilisateurs: -6, partenaires: -5, regulateurs: -3, presse: -7}
+mesures_cles: [M26, M16, M18, M06, M29, M17]
+references:
+  - "CISA, avis AA23-325A — LockBit 3.0 Ransomware Affiliates Exploit CVE 2023-4966 Citrix Bleed Vulnerability (novembre 2023)"
+  - "CERT-FR, publications relatives à la vulnérabilité CVE-2023-4966 dans Citrix NetScaler ADC et Gateway (octobre 2023)"
+  - "ANSSI / Ministère de la Justice, Attaques par rançongiciels, tous concernés (2020)"
+  - "CNIL, page « Les violations de données personnelles »"
+rex: >
+  Le correctif était disponible depuis plusieurs semaines, mais l'appliquer ne suffisait
+  pas : les sessions déjà dérobées restaient valides tant qu'elles n'étaient pas
+  terminées. La double extorsion change la nature de la crise : même avec des sauvegardes
+  intactes, la menace de publication persiste, et le paiement ne garantit ni la
+  suppression des données ni l'absence de revente. La préparation à la notification des
+  personnes et la communication de crise sont aussi importantes que la restauration.
+messages:
+  detection:
+    - {de: "Exploitation", texte: "Les serveurs de fichiers et l'ERP sont chiffrés. Une note renvoie vers un site accessible via Tor."}
+    - {de: "Veille", texte: "Notre organisation apparaît sur le site vitrine du groupe avec un compte à rebours de dix jours et des captures de documents internes."}
+  confinement:
+    - {de: "Équipe réseau", texte: "Les journaux du pare-feu montrent un transfert sortant de plus de 300 Go vers un service de stockage en ligne la semaine dernière."}
+  eradication:
+    - {de: "Prestataire de réponse", texte: "Accès initial confirmé par vol de session sur la passerelle NetScaler, corrigée trop tard. Des outils de prise en main à distance ont été installés."}
+  reprise:
+    - {de: "Direction", texte: "Le compte à rebours expire dans trois jours. Que fait-on si les données sont publiées ?"}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Responsable exploitation"
+    urgence: true
+    delai_secondes: 90
+    texte: >
+      Le chiffrement est en cours sur plusieurs sites. Que faites-vous immédiatement ?
+    choix:
+      - id: A
+        texte: Isoler les réseaux et couper les accès distants, mettre fin à toutes les sessions de la passerelle, sans éteindre les machines
+        qualite: bonne
+        effets: {cout_mult: 0.75, reputation: {utilisateurs: -1}}
+        feedback: >
+          Mettre fin aux sessions actives est indispensable : un jeton dérobé reste valide
+          même après correction. L'isolement réseau stoppe propagation et exfiltration.
+        reference: "CISA, avis AA23-325A"
+      - id: B
+        texte: Appliquer le correctif sur la passerelle et laisser les accès ouverts
+        qualite: moyenne
+        effets: {cout_mult: 1.15, duree_semaines: 1}
+        feedback: >
+          Le correctif empêche de nouveaux vols de session mais n'invalide pas ceux déjà
+          dérobés, et l'attaquant est déjà dans le réseau.
+        reference: "CERT-FR, publications relatives à CVE-2023-4966"
+      - id: C
+        texte: Attendre l'arrivée du prestataire de réponse avant d'agir
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.5, duree_semaines: 3, reputation: {utilisateurs: -3, partenaires: -3}}
+        feedback: >
+          Le chiffrement et l'exfiltration continuent pendant l'attente. Les premiers gestes
+          de confinement doivent être connus et appliqués par les équipes internes.
+        reference: "ANSSI / Ministère de la Justice, Attaques par rançongiciels, tous concernés (2020)"
+  - id: D2
+    heure: 24
+    phase: eradication
+    de: "Négociateur de l'attaquant (via le site vitrine)"
+    texte: >
+      Les attaquants réclament 1,2 million d'euros pour fournir l'outil de déchiffrement et
+      « supprimer » les données volées. Que décidez-vous ?
+    choix:
+      - id: A
+        texte: Refuser de payer, restaurer depuis les sauvegardes saines et préparer la gestion de la publication
+        qualite: bonne
+        effets: {cout_mult: 1.0, reputation: {regulateurs: 2}}
+        feedback: >
+          Rien ne garantit la suppression des données : des cas de nouvelles extorsions ou de
+          revente après paiement sont documentés. L'ANSSI et les forces de l'ordre
+          recommandent de ne pas payer.
+        reference: "ANSSI / Ministère de la Justice, Attaques par rançongiciels, tous concernés (2020)"
+      - id: B
+        texte: Payer pour éviter la publication
+        qualite: mauvaise
+        effets: {cout_fixe: 1200000, reputation: {presse: -6, regulateurs: -4}, risque: [{type: double_extorsion, facteur: 1.6, semaines: 52}, {type: ransomware, facteur: 1.4, semaines: 52}]}
+        feedback: >
+          Le paiement finance le groupe, n'efface pas la violation de données et désigne
+          l'organisation comme une cible solvable.
+        reference: "ANSSI, Panorama de la cybermenace 2024"
+      - id: C
+        texte: Ne pas répondre et attendre l'échéance
+        qualite: moyenne
+        defaut: true
+        effets: {reputation: {presse: -2}}
+        feedback: >
+          Ne pas payer est la bonne orientation, mais l'inaction n'est pas une stratégie : la
+          publication doit être anticipée (analyse des données volées, notifications,
+          communication).
+        reference: "Cybermalveillance.gouv.fr, fiche réflexe rançongiciel"
+  - id: D3
+    heure: 72
+    phase: eradication
+    de: "Délégué à la protection des données"
+    texte: >
+      L'analyse des journaux montre que des dossiers contenant des données personnelles
+      sensibles font partie de l'exfiltration. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Compléter la notification CNIL et informer directement les personnes concernées, sans attendre la publication
+        qualite: bonne
+        effets: {cout_fixe: 30000, reputation: {utilisateurs: 2, regulateurs: 3}, declenche: [rgpd_art34]}
+        feedback: >
+          L'exfiltration de données sensibles par un groupe criminel présente un risque élevé
+          pour les personnes : le RGPD impose de les informer, pour qu'elles puissent se
+          prémunir contre les escroqueries.
+        reference: "RGPD, art. 34"
+      - id: B
+        texte: Informer les personnes seulement si les données sont effectivement publiées
+        qualite: moyenne
+        effets: {reputation: {utilisateurs: -2, regulateurs: -1}, declenche: [rgpd_art34]}
+        feedback: >
+          Le risque élevé existe dès l'exfiltration. Attendre la publication fait perdre des
+          jours précieux aux personnes concernées.
+        reference: "RGPD, art. 34 ; CNIL, page « Les violations de données personnelles »"
+      - id: C
+        texte: Ne pas informer les personnes pour ne pas donner de publicité à l'attaque
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_fixe: 150000, reputation: {utilisateurs: -5, regulateurs: -6, presse: -4}}
+        feedback: >
+          Les personnes découvriront la fuite par la presse ou par des tentatives
+          d'escroquerie. Le défaut d'information est un manquement sanctionnable.
+        reference: "RGPD, art. 34 et 83"
+  - id: D4
+    heure: 168
+    phase: reprise
+    de: "DSI"
+    texte: >
+      Les sauvegardes hors ligne sont intactes. Comment organisez-vous la reprise ?
+    choix:
+      - id: A
+        texte: Reconstruire sur un socle sain, renouveler tous les secrets, corriger et surveiller les équipements exposés, rouvrir par priorité métier
+        qualite: bonne
+        effets: {duree_semaines: 1, reputation: {partenaires: 3}, risque: [{type: double_extorsion, facteur: 0.7, semaines: 52}]}
+        feedback: >
+          Les outils de prise en main à distance et les comptes créés par l'attaquant doivent
+          disparaître ; seule une reconstruction maîtrisée le garantit.
+        reference: "ANSSI, Remédiation de l'Active Directory (2023)"
+      - id: B
+        texte: Restaurer à l'identique au plus vite
+        qualite: mauvaise
+        defaut: true
+        effets: {duree_semaines: -1, risque: [{type: double_extorsion, facteur: 1.7, semaines: 26}, {type: ransomware, facteur: 1.5, semaines: 26}]}
+        feedback: >
+          Une restauration à l'identique réintroduit souvent les portes dérobées de
+          l'attaquant, qui revient quelques semaines plus tard.
+        reference: "ANSSI, Remédiation de l'Active Directory (2023)"
+      - id: C
+        texte: Restaurer progressivement en surveillant avec un EDR, sans reconstruire l'annuaire
+        qualite: moyenne
+        effets: {cout_fixe: 30000, risque: [{type: double_extorsion, facteur: 0.9, semaines: 26}]}
+        feedback: >
+          La surveillance renforcée aide, mais un annuaire compromis reste une faiblesse
+          majeure.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 37 (sauvegardes)"

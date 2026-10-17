@@ -1,0 +1,182 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-003
+type: fuite_donnees
+title: Fuite de données personnelles via une API mal protégée
+description: >
+  Une API qui alimente le portail des usagers ou clients vérifie que l'appelant est
+  authentifié, mais pas qu'il a le droit d'accéder à l'enregistrement demandé. En faisant
+  varier l'identifiant dans la requête, un tiers aspire les dossiers de milliers de
+  personnes (identité, coordonnées, informations de suivi). Un échantillon est proposé à la
+  vente sur un forum cybercriminel.
+based_on: >
+  Défaut d'autorisation au niveau objet (BOLA), premier risque du classement OWASP API
+  Security Top 10 2023 (API1:2023) ; nombreuses fuites de données recensées en France et en
+  Europe depuis des portails clients et des applications métier exposées.
+cve_references: []
+initial_vector: API du portail usagers / clients sans contrôle d'autorisation au niveau de chaque objet
+attack_chain: [T1595.002, T1190, T1119, T1213, T1567]
+impact: {D: 1, I: 2, C: 4, T: 3}
+cout_min: 40000
+cout_max: 600000
+duree_semaines: {min: 2, max: 6}
+phase_detection_semaines: {min: 1, max: 12}
+obligations_declenchees: [cnil_72h, hds_signalement, nis2_24h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {utilisateurs: -6, regulateurs: -4, presse: -5}
+mesures_cles: [M23, M24, M25, M32, M39]
+references:
+  - "OWASP, API Security Top 10 2023 — API1:2023 Broken Object Level Authorization"
+  - "CNIL, Guide de la sécurité des données personnelles (édition 2024)"
+  - "CNIL, page « Les violations de données personnelles » et formulaire de notification"
+  - "ANSSI, Recommandations pour la sécurisation des sites web"
+rex: >
+  La faille ne tenait pas à une technologie exotique mais à une vérification manquante : le
+  serveur ne contrôlait pas que l'enregistrement demandé appartenait bien à l'utilisateur
+  connecté. Des tests de sécurité applicatifs avant mise en production, une limitation du
+  débit et une surveillance des volumes de requêtes auraient permis de prévenir ou de
+  détecter l'aspiration. La qualité de la notification à la CNIL et de l'information des
+  personnes concernées pèse fortement sur la suite : dans ce scénario, la sanction
+  administrative potentielle est estimée entre 15 k€ et 250 k€ selon la diligence de
+  l'organisation.
+messages:
+  detection:
+    - {de: "Veille", texte: "Un vendeur propose sur un forum un fichier présenté comme la base de nos usagers ou clients, avec un échantillon de 200 lignes."}
+    - {de: "Équipe applicative", texte: "Les journaux de l'API montrent des centaines de milliers de requêtes séquentielles depuis quelques comptes depuis trois semaines."}
+  confinement:
+    - {de: "Équipe applicative", texte: "Nous pouvons couper l'API, mais le portail et l'application mobile ne fonctionneront plus."}
+  eradication:
+    - {de: "Auditeur", texte: "Le contrôle d'autorisation manque aussi sur deux autres points d'accès de l'API."}
+  reprise:
+    - {de: "Service des relations usagers", texte: "Les appels se multiplient : des personnes reçoivent des messages frauduleux mentionnant leur dossier."}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Responsable applicatif"
+    urgence: true
+    delai_secondes: 90
+    texte: >
+      L'aspiration semble toujours en cours. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Suspendre les points d'accès vulnérables, bloquer les comptes abusifs et conserver les journaux
+        qualite: bonne
+        effets: {cout_mult: 0.8, reputation: {utilisateurs: -1}}
+        feedback: >
+          Arrêter la fuite prime sur le confort d'utilisation. La conservation des journaux
+          est indispensable pour mesurer l'ampleur de la violation et la notifier.
+        reference: "CNIL, Guide de la sécurité des données personnelles (édition 2024)"
+      - id: B
+        texte: Bloquer les adresses IP observées et laisser l'API en service
+        qualite: moyenne
+        effets: {cout_mult: 1.1, risque: [{type: fuite_donnees, facteur: 1.2, semaines: 8}]}
+        feedback: >
+          Le blocage d'adresses IP se contourne facilement. Tant que le défaut d'autorisation
+          subsiste, la fuite peut reprendre.
+        reference: "OWASP, API Security Top 10 2023 — API1:2023"
+      - id: C
+        texte: Ne rien couper avant d'avoir confirmé que l'échantillon est authentique
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.4, duree_semaines: 1, reputation: {utilisateurs: -3, regulateurs: -2}}
+        feedback: >
+          Les journaux montrent déjà l'abus : chaque heure supplémentaire augmente le nombre
+          de personnes concernées.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 40 (procédure de gestion des incidents)"
+  - id: D2
+    heure: 12
+    phase: confinement
+    de: "Délégué à la protection des données"
+    texte: >
+      L'analyse préliminaire confirme l'accès à des données d'identification et de suivi.
+      Comment gérez-vous la notification à la CNIL ?
+    choix:
+      - id: A
+        texte: Notifier la CNIL avant 72 heures avec les éléments connus, puis compléter
+        qualite: bonne
+        effets: {reputation: {regulateurs: 4}}
+        feedback: >
+          La notification initiale peut être incomplète ; ce qui compte est de respecter le
+          délai et de documenter la violation dans le registre interne.
+        reference: "RGPD, art. 33 §1 et §4"
+      - id: B
+        texte: Attendre de connaître le nombre exact de personnes concernées
+        qualite: moyenne
+        effets: {reputation: {regulateurs: -2}}
+        feedback: >
+          Le décompte précis peut prendre des semaines. Le retard doit être justifié et
+          pèse dans l'appréciation de la CNIL.
+        reference: "RGPD, art. 33 §1"
+      - id: C
+        texte: Ne pas notifier tant que les données n'ont pas été publiées
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_fixe: 100000, reputation: {regulateurs: -6, presse: -3}}
+        feedback: >
+          La violation est constituée dès l'accès non autorisé. L'absence de notification
+          est un manquement distinct, susceptible d'alourdir la sanction.
+        reference: "RGPD, art. 33 et 83"
+  - id: D3
+    heure: 48
+    phase: eradication
+    de: "Direction de la communication"
+    texte: >
+      Le risque d'hameçonnage ciblé des personnes concernées est élevé. Informez-vous les
+      personnes ?
+    choix:
+      - id: A
+        texte: Informer directement les personnes concernées en termes clairs, avec les risques et les précautions à prendre
+        qualite: bonne
+        effets: {cout_fixe: 20000, reputation: {utilisateurs: 2, regulateurs: 2, presse: 1}, declenche: [rgpd_art34]}
+        feedback: >
+          Lorsque la violation présente un risque élevé pour les personnes, le RGPD impose de
+          les informer. Une communication honnête et utile limite aussi les escroqueries.
+        reference: "RGPD, art. 34 ; Cybermalveillance.gouv.fr, ressources sur la violation de données personnelles"
+      - id: B
+        texte: Publier un communiqué général sur le site, sans contacter les personnes
+        qualite: moyenne
+        effets: {reputation: {utilisateurs: -2, regulateurs: -1}}
+        feedback: >
+          La communication publique n'est admise qu'en cas d'effort disproportionné pour
+          contacter individuellement les personnes.
+        reference: "RGPD, art. 34 §3 c)"
+      - id: C
+        texte: Ne pas communiquer pour éviter d'alarmer
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {utilisateurs: -5, presse: -5, regulateurs: -4}}
+        feedback: >
+          Les personnes seront visées par des escroqueries sans savoir pourquoi, et la fuite
+          sera tôt ou tard rendue publique par d'autres.
+        reference: "RGPD, art. 34"
+  - id: D4
+    heure: 120
+    phase: reprise
+    de: "DSI"
+    texte: >
+      Dans quelles conditions remettez-vous l'API en service ?
+    choix:
+      - id: A
+        texte: Correction du contrôle d'autorisation sur tous les points d'accès, test d'intrusion de vérification, limitation de débit et alertes
+        qualite: bonne
+        effets: {cout_fixe: 25000, duree_semaines: 1, risque: [{type: fuite_donnees, facteur: 0.6, semaines: 52}]}
+        feedback: >
+          Corriger la cause sur l'ensemble de l'API et vérifier par un test indépendant évite
+          une seconde fuite par un point d'accès voisin.
+        reference: "OWASP, API Security Top 10 2023"
+      - id: B
+        texte: Corriger le seul point d'accès exploité et rouvrir
+        qualite: mauvaise
+        defaut: true
+        effets: {duree_semaines: -1, risque: [{type: fuite_donnees, facteur: 1.5, semaines: 26}]}
+        feedback: >
+          L'audit a montré que le même défaut existe ailleurs : il sera exploité à son tour.
+        reference: "OWASP, API Security Top 10 2023 — API1:2023"
+      - id: C
+        texte: Placer l'API derrière un pare-feu applicatif sans modifier le code
+        qualite: moyenne
+        effets: {cout_fixe: 15000, risque: [{type: fuite_donnees, facteur: 0.9, semaines: 26}]}
+        feedback: >
+          Un pare-feu applicatif aide à limiter les abus, mais ne sait pas si un utilisateur a
+          droit à un enregistrement donné : la correction doit être faite dans l'application.
+        reference: "ANSSI, Recommandations pour la sécurisation des sites web"

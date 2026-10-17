@@ -1,0 +1,692 @@
+# Catalogue des 40 mesures de sécurité — RSSI Simulator
+# Licence des contenus : CC BY-SA 4.0
+#
+# Coûts : ordres de grandeur de marché France 2024 (fourchettes du cahier des charges,
+# CESIN / Hiscox / UGAP / catalogues publics). Ils sont calculés pour chaque organisation :
+#   coût = cout_deploiement + cout_par_employe × employés + cout_par_poste × postes
+#          + cout_par_membre_ssi × équipe SSI, borné par [cout_min, cout_max].
+# reduction_risque : baisse de la PROBABILITÉ d'occurrence par type d'incident (0-1).
+# reduction_impact : baisse du COÛT / de la GRAVITÉ si l'incident survient (0-1).
+# detection : réduction du délai de détection (0-1).
+# hygiene : n° des mesures du Guide d'hygiène informatique ANSSI (2017) couvertes.
+# controle_iso : contrôles de l'annexe A d'ISO/IEC 27001:2022 couverts.
+# Types : ransomware, phishing, fuite_donnees, supply_chain, vpn_exploit, ddos,
+#         initie, double_extorsion, compromission_cloud, ot_iot
+
+mesures:
+  # ------------------------------------------------------------------ Formation
+  - id: M01
+    nom: Sensibilisation SSI de tout le personnel (e-learning)
+    categorie: formation
+    type: prevention
+    description: >
+      Module e-learning annuel et campagnes de faux hameçonnage pour l'ensemble des agents
+      et salariés. Réduit fortement l'efficacité des courriels piégés.
+    controle_iso: ["6.3"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 2 ; SecNumacadémie"
+    hygiene: [2]
+    cout_deploiement: 0
+    cout_par_employe: 45
+    maintenance_par_employe: 45
+    delai_semaines: 4
+    maintenance_annuelle: 0
+    reduction_risque: {phishing: 0.30, compromission_cloud: 0.20, ransomware: 0.15, double_extorsion: 0.15}
+
+  - id: M02
+    nom: Formation RGPD du personnel
+    categorie: formation
+    type: gouvernance
+    description: >
+      Formation aux principes de protection des données (minimisation, droits des personnes,
+      signalement des violations). Mission de sensibilisation du DPO (RGPD art. 39).
+    controle_iso: ["5.34", "6.3"]
+    guide_anssi: "Guide CNIL de la sécurité des données personnelles (2024), fiche 1"
+    hygiene: []
+    cout_deploiement: 2000
+    cout_par_employe: 15
+    maintenance_par_employe: 10
+    delai_semaines: 6
+    maintenance_annuelle: 0
+    reduction_risque: {fuite_donnees: 0.10, initie: 0.05}
+    conformite: [formation_rgpd]
+
+  - id: M03
+    nom: Formation spécialisée de l'équipe SSI
+    categorie: formation
+    type: detection
+    description: >
+      Formations techniques certifiantes (gestion d'incident, investigation, durcissement)
+      pour chaque membre de l'équipe SSI.
+    controle_iso: ["6.3", "5.24"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 1"
+    hygiene: [1]
+    cout_deploiement: 0
+    cout_par_membre_ssi: 2500
+    maintenance_annuelle: 0
+    maintenance_par_employe: 0
+    delai_semaines: 8
+    detection: 0.10
+    reduction_risque: {tous: 0.05}
+    reduction_impact: {tous: 0.05}
+
+  - id: M04
+    nom: Exercice de crise cyber annuel
+    categorie: formation
+    type: reponse
+    description: >
+      Exercice sur table ou simulation avec la direction, la communication, le juridique et la DSI.
+      Entraîne la cellule de crise et valide les modèles de notification.
+    controle_iso: ["5.24", "5.26", "5.29"]
+    guide_anssi: "Guide ANSSI « Organiser un exercice de gestion de crise cyber » (2021)"
+    hygiene: [40]
+    cout_deploiement: 6000
+    maintenance_annuelle: 6000
+    delai_semaines: 6
+    reduction_risque: {}
+    reduction_impact: {tous: 0.15}
+
+  # ------------------------------------------------------------------ Réponse
+  - id: M05
+    nom: Contrat de réponse à incident (PRIS qualifié)
+    categorie: externalisation
+    type: reponse
+    description: >
+      Convention d'intervention avec un prestataire de réponse aux incidents de sécurité
+      qualifié par l'ANSSI, avec procédure de gestion d'incident et annuaire de crise.
+    controle_iso: ["5.24", "5.26", "5.28"]
+    guide_anssi: "Référentiel PRIS (ANSSI) ; Guide d'hygiène, mesure 40"
+    hygiene: [40]
+    cout_deploiement: 5000
+    maintenance_annuelle: 10000
+    delai_semaines: 4
+    reduction_risque: {}
+    reduction_impact: {tous: 0.25}
+
+  # ------------------------------------------------------------------ Postes
+  - id: M06
+    nom: EDR sur postes et serveurs
+    categorie: outils
+    type: detection
+    description: >
+      Détection et réponse sur les terminaux (25 à 50 €/poste/an). Bloque les charges
+      malveillantes connues et détecte les comportements suspects (chiffrement massif, dump LSASS).
+    controle_iso: ["8.7", "8.16"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 14 et 16"
+    hygiene: [14, 16]
+    cout_deploiement: 3000
+    cout_par_poste: 40
+    maintenance_par_poste: 35
+    maintenance_annuelle: 0
+    delai_semaines: 6
+    detection: 0.35
+    reduction_risque: {ransomware: 0.45, double_extorsion: 0.40, vpn_exploit: 0.15, supply_chain: 0.20, compromission_cloud: 0.05, initie: 0.05}
+
+  - id: M07
+    nom: Durcissement et antivirus centralisé des postes
+    categorie: outils
+    type: prevention
+    description: >
+      Configuration de référence (master durci), pare-feu local, antivirus géré centralement.
+    controle_iso: ["8.1", "8.9", "8.7"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 14, 16 et 17"
+    hygiene: [14, 16, 17]
+    cout_deploiement: 4000
+    cout_par_poste: 5
+    maintenance_annuelle: 1000
+    delai_semaines: 6
+    reduction_risque: {ransomware: 0.15, double_extorsion: 0.10, phishing: 0.05}
+
+  - id: M08
+    nom: Gestion outillée des correctifs de sécurité
+    categorie: outils
+    type: prevention
+    description: >
+      Inventaire logiciel, déploiement automatisé des correctifs, indicateurs de délai de
+      correction. Aurait neutralisé EternalBlue (MS17-010, correctif de mars 2017).
+    controle_iso: ["8.8", "8.19", "8.32"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 34"
+    hygiene: [34]
+    cout_deploiement: 6000
+    cout_par_poste: 8
+    maintenance_par_poste: 6
+    maintenance_annuelle: 0
+    delai_semaines: 6
+    reduction_risque: {ransomware: 0.35, vpn_exploit: 0.40, double_extorsion: 0.25, ot_iot: 0.10, fuite_donnees: 0.05}
+
+  - id: M09
+    nom: Désactivation de SMBv1 et des protocoles obsolètes
+    categorie: divers
+    type: prevention
+    description: >
+      Suppression de SMBv1, NTLMv1, LLMNR/NetBIOS et des chiffrements faibles.
+    controle_iso: ["8.9", "8.20"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 21"
+    hygiene: [21]
+    cout_deploiement: 3000
+    maintenance_annuelle: 0
+    delai_semaines: 4
+    reduction_risque: {ransomware: 0.25, double_extorsion: 0.10}
+
+  # ------------------------------------------------------------------ Identités
+  - id: M10
+    nom: Authentification multifacteur (accès distants, messagerie, admins)
+    categorie: outils
+    type: prevention
+    description: >
+      MFA généralisée sur le VPN, la messagerie et les comptes d'administration.
+      Prérequis quasi systématique des assureurs cyber.
+    controle_iso: ["8.5", "5.17"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 13 ; Recommandations ANSSI relatives à l'authentification multifacteur (2021)"
+    hygiene: [13]
+    cout_deploiement: 5000
+    cout_par_employe: 30
+    maintenance_par_employe: 25
+    maintenance_annuelle: 0
+    delai_semaines: 6
+    reduction_risque: {phishing: 0.35, compromission_cloud: 0.45, vpn_exploit: 0.25, supply_chain: 0.10, double_extorsion: 0.15, ransomware: 0.10}
+
+  - id: M11
+    nom: MFA résistante à l'hameçonnage (clés FIDO2) pour les comptes sensibles
+    categorie: outils
+    type: prevention
+    description: >
+      Clés de sécurité FIDO2 pour les administrateurs, la direction et la comptabilité.
+      Neutralise les attaques de type « adversary-in-the-middle ».
+    controle_iso: ["8.5"]
+    guide_anssi: "Recommandations ANSSI relatives à l'authentification multifacteur et aux mots de passe (2021)"
+    hygiene: [13]
+    prerequis: [M10]
+    cout_deploiement: 3000
+    cout_par_employe: 8
+    maintenance_annuelle: 500
+    maintenance_par_employe: 2
+    delai_semaines: 4
+    reduction_risque: {compromission_cloud: 0.30, phishing: 0.15}
+
+  - id: M12
+    nom: Accès conditionnel et révocation des sessions cloud
+    categorie: outils
+    type: prevention
+    description: >
+      Politiques d'accès conditionnel (Entra ID), conformité des terminaux, durée de vie
+      réduite des jetons, détection des connexions à risque.
+    controle_iso: ["5.15", "8.5", "5.23"]
+    guide_anssi: "Recommandations ANSSI pour un usage sécurisé de Microsoft 365 / Entra ID"
+    hygiene: [8]
+    prerequis: [M10]
+    cout_deploiement: 6000
+    cout_par_employe: 5
+    maintenance_par_employe: 40
+    maintenance_annuelle: 0
+    delai_semaines: 4
+    detection: 0.05
+    reduction_risque: {compromission_cloud: 0.35, phishing: 0.10}
+
+  - id: M13
+    nom: Administration sécurisée (bastion, comptes dédiés, modèle en tiers)
+    categorie: outils
+    type: prevention
+    description: >
+      Postes et comptes d'administration dédiés, bastion journalisé, cloisonnement des
+      niveaux de privilège de l'Active Directory.
+    controle_iso: ["8.2", "8.18", "8.15"]
+    guide_anssi: "ANSSI, Recommandations relatives à l'administration sécurisée des SI (PA-022, 2021)"
+    hygiene: [5, 8, 27, 28, 29]
+    cout_deploiement: 25000
+    maintenance_annuelle: 5000
+    delai_semaines: 12
+    detection: 0.05
+    reduction_risque: {ransomware: 0.25, vpn_exploit: 0.25, double_extorsion: 0.20, supply_chain: 0.25, initie: 0.10, compromission_cloud: 0.05}
+
+  - id: M14
+    nom: Audit et durcissement de l'Active Directory
+    categorie: audit
+    type: prevention
+    description: >
+      Audit des points de contrôle AD (outil ORADAD de l'ANSSI), suppression des chemins
+      d'attaque vers les administrateurs du domaine.
+    controle_iso: ["8.2", "8.9", "5.18"]
+    guide_anssi: "ANSSI, Points de contrôle Active Directory ; outil ORADAD"
+    hygiene: [5, 9, 11]
+    cout_deploiement: 15000
+    maintenance_annuelle: 3000
+    delai_semaines: 8
+    reduction_risque: {ransomware: 0.20, vpn_exploit: 0.20, double_extorsion: 0.20, compromission_cloud: 0.05}
+
+  - id: M15
+    nom: Mots de passe administrateurs locaux uniques (LAPS)
+    categorie: divers
+    type: prevention
+    description: Un mot de passe différent et renouvelé pour chaque compte administrateur local.
+    controle_iso: ["5.17", "8.2"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 11 et 29"
+    hygiene: [11, 29]
+    cout_deploiement: 2000
+    maintenance_annuelle: 0
+    delai_semaines: 2
+    reduction_risque: {ransomware: 0.10, double_extorsion: 0.10}
+
+  # ------------------------------------------------------------------ Résilience
+  - id: M16
+    nom: Sauvegardes hors ligne et immuables, testées
+    categorie: outils
+    type: reponse
+    description: >
+      Règle 3-2-1 avec une copie déconnectée ou immuable, tests de restauration trimestriels.
+      Mesure la plus efficace pour survivre à un rançongiciel.
+    controle_iso: ["8.13"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 37 ; ANSSI, Fondamentaux de la sauvegarde des SI (2024)"
+    hygiene: [37]
+    cout_deploiement: 15000
+    cout_par_employe: 10
+    maintenance_annuelle: 6000
+    maintenance_par_employe: 5
+    delai_semaines: 6
+    reduction_risque: {}
+    reduction_impact: {ransomware: 0.60, double_extorsion: 0.40, ot_iot: 0.20, supply_chain: 0.10}
+
+  - id: M17
+    nom: Plan de continuité et de reprise d'activité (PCA/PRA)
+    categorie: externalisation
+    type: reponse
+    description: >
+      Modes dégradés métiers, site ou infrastructure de secours, procédures de reprise testées.
+    controle_iso: ["5.29", "5.30", "8.14"]
+    guide_anssi: "ANSSI, Guide « Crise d'origine cyber : les clés d'une gestion opérationnelle et stratégique » (2021)"
+    hygiene: []
+    cout_deploiement: 30000
+    maintenance_annuelle: 8000
+    delai_semaines: 16
+    reduction_risque: {}
+    reduction_impact: {ransomware: 0.25, ddos: 0.30, ot_iot: 0.20, double_extorsion: 0.15, supply_chain: 0.10}
+
+  # ------------------------------------------------------------------ Réseau
+  - id: M18
+    nom: Segmentation et cloisonnement du réseau
+    categorie: outils
+    type: prevention
+    description: >
+      Zones réseau par niveau de sensibilité, filtrage inter-zones, isolement des
+      équipements non maîtrisés (biomédical, IoT).
+    controle_iso: ["8.22", "8.20"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 19"
+    hygiene: [19]
+    cout_deploiement: 20000
+    cout_par_employe: 10
+    maintenance_annuelle: 3000
+    delai_semaines: 12
+    reduction_risque: {ransomware: 0.25, double_extorsion: 0.20, vpn_exploit: 0.15, ot_iot: 0.35, supply_chain: 0.15}
+
+  - id: M19
+    nom: Cloisonnement OT / IT (DMZ industrielle, passerelles)
+    categorie: outils
+    type: prevention
+    description: >
+      Séparation stricte des réseaux industriels ou techniques, passerelles d'échange
+      contrôlées, télémaintenance encadrée.
+    controle_iso: ["8.22", "8.21"]
+    guide_anssi: "ANSSI, La cybersécurité des systèmes industriels — mesures détaillées (2014)"
+    hygiene: [19, 25]
+    cout_deploiement: 40000
+    maintenance_annuelle: 6000
+    delai_semaines: 16
+    reduction_risque: {ot_iot: 0.50, ransomware: 0.05}
+
+  - id: M20
+    nom: Passerelle web sécurisée (proxy filtrant)
+    categorie: outils
+    type: prevention
+    description: Filtrage des flux web sortants, blocage des domaines malveillants et des téléchargements à risque.
+    controle_iso: ["8.23"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 22"
+    hygiene: [22]
+    cout_deploiement: 6000
+    cout_par_employe: 5
+    maintenance_par_employe: 12
+    maintenance_annuelle: 0
+    delai_semaines: 4
+    detection: 0.05
+    reduction_risque: {phishing: 0.15, ransomware: 0.10, compromission_cloud: 0.05, double_extorsion: 0.05}
+
+  - id: M21
+    nom: Sécurisation de la messagerie (anti-hameçonnage, SPF/DKIM/DMARC)
+    categorie: outils
+    type: prevention
+    description: >
+      Filtrage avancé des pièces jointes et liens, authentification des domaines d'envoi,
+      bandeau « expéditeur externe ».
+    controle_iso: ["5.14", "8.23"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 24"
+    hygiene: [24]
+    cout_deploiement: 3000
+    cout_par_employe: 5
+    maintenance_par_employe: 15
+    maintenance_annuelle: 0
+    delai_semaines: 3
+    reduction_risque: {phishing: 0.35, ransomware: 0.15, double_extorsion: 0.10, compromission_cloud: 0.10}
+
+  - id: M22
+    nom: Procédure anti-fraude au virement (double validation, contre-appel)
+    categorie: divers
+    type: gouvernance
+    description: >
+      Toute modification de coordonnées bancaires ou virement inhabituel est validé par deux
+      personnes et confirmé par un contre-appel sur un numéro connu.
+    controle_iso: ["5.3", "5.37"]
+    guide_anssi: "Cybermalveillance.gouv.fr, fiche « Fraude au président / faux ordre de virement »"
+    hygiene: []
+    cout_deploiement: 1000
+    maintenance_annuelle: 0
+    delai_semaines: 2
+    reduction_risque: {phishing: 0.10}
+    reduction_impact: {phishing: 0.70}
+
+  # ------------------------------------------------------------------ Applications
+  - id: M23
+    nom: Protection des applications web et API (WAF, authentification, quotas)
+    categorie: outils
+    type: prevention
+    description: >
+      Pare-feu applicatif, authentification et contrôle d'autorisation systématiques sur les API,
+      limitation de débit.
+    controle_iso: ["8.20", "8.26"]
+    guide_anssi: "ANSSI, Recommandations pour la sécurisation des sites web ; OWASP API Security Top 10 (2023)"
+    hygiene: [23]
+    cout_deploiement: 12000
+    maintenance_annuelle: 8000
+    delai_semaines: 6
+    detection: 0.05
+    reduction_risque: {fuite_donnees: 0.40, ddos: 0.15, vpn_exploit: 0.05}
+
+  - id: M24
+    nom: Développement sécurisé (revue de code, tests de sécurité)
+    categorie: externalisation
+    type: prevention
+    description: Exigences de sécurité dans les projets, revue de code, tests d'intrusion applicatifs avant mise en production.
+    controle_iso: ["8.25", "8.28", "8.29", "8.30"]
+    guide_anssi: "ANSSI, Règles de programmation pour le développement sécurisé ; Guide d'hygiène, mesure 38"
+    hygiene: []
+    cout_deploiement: 15000
+    maintenance_annuelle: 8000
+    delai_semaines: 10
+    reduction_risque: {fuite_donnees: 0.35, supply_chain: 0.05}
+
+  - id: M25
+    nom: Test d'intrusion annuel (prestataire PASSI)
+    categorie: audit
+    type: prevention
+    description: >
+      Audit technique annuel par un prestataire qualifié PASSI (8 000 à 25 000 €),
+      suivi d'un plan de remédiation.
+    controle_iso: ["5.35", "8.8", "8.29"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 38 ; référentiel PASSI"
+    hygiene: [38]
+    cout_deploiement: 6000
+    cout_par_employe: 10
+    cout_min: 8000
+    cout_max: 25000
+    maintenance_annuelle: 6000
+    maintenance_par_employe: 10
+    maintenance_min: 8000
+    maintenance_max: 25000
+    delai_semaines: 6
+    reduction_risque: {vpn_exploit: 0.20, fuite_donnees: 0.20, ransomware: 0.10, compromission_cloud: 0.05, double_extorsion: 0.10}
+
+  - id: M26
+    nom: Gestion des vulnérabilités et veille CERT-FR
+    categorie: outils
+    type: prevention
+    description: >
+      Scan continu de la surface exposée, abonnement aux avis et alertes CERT-FR,
+      priorisation des correctifs selon le catalogue des vulnérabilités exploitées.
+    controle_iso: ["8.8", "5.7"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 34 et 35 ; avis CERT-FR"
+    hygiene: [34, 35]
+    cout_deploiement: 5000
+    maintenance_annuelle: 8000
+    delai_semaines: 4
+    detection: 0.05
+    reduction_risque: {vpn_exploit: 0.30, ransomware: 0.15, fuite_donnees: 0.10, double_extorsion: 0.10, ot_iot: 0.05}
+
+  - id: M27
+    nom: Réduction de la surface exposée et remplacement du VPN (ZTNA)
+    categorie: outils
+    type: prevention
+    description: >
+      Inventaire et fermeture des services exposés, remplacement des passerelles VPN
+      vulnérables, accès distants via un service à confiance zéro.
+    controle_iso: ["8.20", "8.21", "6.7"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 23 et 32 ; ANSSI, Recommandations sur le nomadisme numérique (2018)"
+    hygiene: [23, 32]
+    cout_deploiement: 25000
+    maintenance_annuelle: 8000
+    delai_semaines: 10
+    reduction_risque: {vpn_exploit: 0.50, ransomware: 0.10, double_extorsion: 0.10}
+
+  # ------------------------------------------------------------------ Détection
+  - id: M28
+    nom: SIEM externalisé
+    categorie: externalisation
+    type: detection
+    description: >
+      Collecte et corrélation des journaux par un prestataire (30 000 à 80 000 €/an selon la taille).
+    controle_iso: ["8.15", "8.16"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 36 ; ANSSI, Recommandations de sécurité pour la journalisation (2022)"
+    hygiene: [36]
+    cout_deploiement: 10000
+    cout_par_employe: 30
+    cout_min: 30000
+    cout_max: 80000
+    maintenance_annuelle: 10000
+    maintenance_par_employe: 30
+    maintenance_min: 30000
+    maintenance_max: 80000
+    delai_semaines: 10
+    detection: 0.45
+    reduction_risque: {initie: 0.15, compromission_cloud: 0.15, vpn_exploit: 0.10}
+
+  - id: M29
+    nom: SOC externalisé 24/7 (MSSP / PDIS qualifié)
+    categorie: externalisation
+    type: detection
+    description: >
+      Centre opérationnel de sécurité externalisé, surveillance et réponse 24 h/24
+      (50 000 à 200 000 €/an).
+    controle_iso: ["8.16", "5.25", "5.26"]
+    guide_anssi: "Référentiel PDIS (prestataires de détection qualifiés ANSSI)"
+    hygiene: [36, 40]
+    cout_deploiement: 30000
+    cout_par_employe: 50
+    cout_min: 50000
+    cout_max: 200000
+    maintenance_annuelle: 30000
+    maintenance_par_employe: 50
+    maintenance_min: 50000
+    maintenance_max: 200000
+    delai_semaines: 12
+    detection: 0.65
+    reduction_risque: {ransomware: 0.25, double_extorsion: 0.25, vpn_exploit: 0.20, compromission_cloud: 0.25, initie: 0.20, supply_chain: 0.20, ot_iot: 0.10}
+    reduction_impact: {tous: 0.10}
+
+  - id: M30
+    nom: Prévention des fuites de données (DLP) et classification
+    categorie: outils
+    type: detection
+    description: Classification des informations, détection et blocage des exfiltrations (messagerie, cloud, USB).
+    controle_iso: ["5.12", "5.13", "8.12"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 4 et 15"
+    hygiene: [15]
+    cout_deploiement: 15000
+    cout_par_employe: 15
+    maintenance_par_employe: 12
+    maintenance_annuelle: 0
+    delai_semaines: 10
+    detection: 0.05
+    reduction_risque: {initie: 0.35, fuite_donnees: 0.15, double_extorsion: 0.10}
+
+  - id: M31
+    nom: Gestion des arrivées, départs et revue des droits
+    categorie: divers
+    type: gouvernance
+    description: >
+      Processus RH/DSI de création, modification et révocation des accès ; revue semestrielle
+      des habilitations sur les applications sensibles.
+    controle_iso: ["5.18", "6.5", "5.16"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 6 et 9"
+    hygiene: [6, 9]
+    cout_deploiement: 8000
+    maintenance_annuelle: 3000
+    delai_semaines: 6
+    reduction_risque: {initie: 0.35, compromission_cloud: 0.05, supply_chain: 0.05}
+
+  - id: M32
+    nom: Journalisation centralisée
+    categorie: outils
+    type: detection
+    description: Centralisation et conservation des journaux des équipements critiques (AD, pare-feu, VPN, messagerie).
+    controle_iso: ["8.15", "8.17"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesure 36"
+    hygiene: [36]
+    cout_deploiement: 8000
+    maintenance_annuelle: 2000
+    delai_semaines: 6
+    detection: 0.15
+    reduction_risque: {}
+    reduction_impact: {tous: 0.05}
+
+  # ------------------------------------------------------------------ Tiers
+  - id: M33
+    nom: Évaluation de la sécurité des fournisseurs et clauses contractuelles
+    categorie: audit
+    type: gouvernance
+    description: >
+      Questionnaires et audits des fournisseurs critiques, plan d'assurance sécurité,
+      clauses de notification d'incident et de réversibilité.
+    controle_iso: ["5.19", "5.20", "5.21", "5.22"]
+    guide_anssi: "ANSSI, Maîtriser les risques de l'infogérance (2010) ; Guide d'hygiène, mesure 3"
+    hygiene: [3]
+    cout_deploiement: 6000
+    maintenance_annuelle: 4000
+    delai_semaines: 8
+    reduction_risque: {supply_chain: 0.35, fuite_donnees: 0.05}
+
+  - id: M34
+    nom: Encadrement des accès des prestataires
+    categorie: outils
+    type: prevention
+    description: >
+      Comptes nominatifs, accès via bastion, ouverture à la demande et limitée dans le temps,
+      interconnexions partenaires filtrées.
+    controle_iso: ["5.22", "8.2", "8.21"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 3, 8 et 25"
+    hygiene: [25]
+    cout_deploiement: 10000
+    maintenance_annuelle: 3000
+    delai_semaines: 6
+    reduction_risque: {supply_chain: 0.30, vpn_exploit: 0.05, ot_iot: 0.10}
+
+  # ------------------------------------------------------------------ Disponibilité
+  - id: M35
+    nom: Protection anti-DDoS (opérateur / CDN)
+    categorie: externalisation
+    type: prevention
+    description: Service de filtrage volumétrique et applicatif des attaques par déni de service.
+    controle_iso: ["8.14", "8.20", "8.6"]
+    guide_anssi: "ANSSI, Comprendre et anticiper les attaques DDoS (2015)"
+    hygiene: []
+    cout_deploiement: 5000
+    cout_par_employe: 3
+    maintenance_annuelle: 12000
+    maintenance_par_employe: 5
+    delai_semaines: 3
+    reduction_risque: {ddos: 0.60}
+    reduction_impact: {ddos: 0.50}
+
+  - id: M36
+    nom: Chiffrement des postes nomades et des données sensibles
+    categorie: outils
+    type: prevention
+    description: Chiffrement intégral des disques des portables et des supports, chiffrement des échanges sensibles.
+    controle_iso: ["8.24", "7.9", "7.10"]
+    guide_anssi: "Guide d'hygiène informatique ANSSI, mesures 18 et 31"
+    hygiene: [18, 30, 31]
+    cout_deploiement: 3000
+    cout_par_poste: 10
+    maintenance_par_poste: 3
+    maintenance_annuelle: 0
+    delai_semaines: 6
+    reduction_risque: {fuite_donnees: 0.10, initie: 0.10}
+    reduction_impact: {double_extorsion: 0.15, fuite_donnees: 0.10}
+
+  # ------------------------------------------------------------------ Transfert / gouvernance
+  - id: M37
+    nom: Cyber-assurance
+    categorie: assurance
+    type: reponse
+    description: >
+      Transfert d'une partie du risque financier : 70 % des pertes au-delà d'une franchise de
+      10 000 €, dans la limite du plafond de garantie. Prime de 0,3 % à 1,5 % du plafond selon
+      le profil de risque (MFA et sauvegardes exigées pour le meilleur taux). Indemnisation
+      conditionnée au dépôt de plainte sous 72 h (Code des assurances, art. L.12-10-1).
+    controle_iso: ["5.31"]
+    guide_anssi: "AMRAE, Rapport LUCY sur le marché de l'assurance cyber ; Code des assurances art. L.12-10-1"
+    hygiene: []
+    assurance: true
+    cout_deploiement: 0
+    maintenance_annuelle: 0
+    delai_semaines: 4
+    reduction_risque: {}
+
+  - id: M38
+    nom: Certification ISO/IEC 27001:2022 (audit de certification)
+    categorie: audit
+    type: gouvernance
+    description: >
+      Audit de certification par un organisme accrédité (15 000 à 40 000 €), puis audits
+      de surveillance annuels. Exige une couverture suffisante des 93 contrôles de l'annexe A.
+    controle_iso: ["5.35", "5.36", "5.1", "5.4"]
+    guide_anssi: "ISO/IEC 27001:2022 ; COFRAC (organismes accrédités)"
+    hygiene: [38]
+    cout_deploiement: 10000
+    cout_par_employe: 15
+    cout_min: 15000
+    cout_max: 40000
+    maintenance_annuelle: 6000
+    maintenance_par_employe: 9
+    maintenance_min: 9000
+    maintenance_max: 24000
+    delai_semaines: 12
+    reduction_risque: {tous: 0.05}
+    conformite: [iso_certification]
+
+  - id: M39
+    nom: Délégué à la protection des données (DPO mutualisé ou externalisé)
+    categorie: externalisation
+    type: gouvernance
+    description: >
+      Désignation d'un DPO déclaré auprès de la CNIL, chargé de la tenue du registre,
+      des analyses d'impact et du traitement des violations.
+    controle_iso: ["5.34", "5.31"]
+    guide_anssi: "CNIL, Guide pratique du délégué à la protection des données"
+    hygiene: []
+    cout_deploiement: 2000
+    maintenance_annuelle: 12000
+    delai_semaines: 4
+    reduction_risque: {fuite_donnees: 0.05}
+    conformite: [dpo]
+
+  - id: M40
+    nom: Cartographie du SI et inventaire des comptes privilégiés
+    categorie: divers
+    type: gouvernance
+    description: >
+      Cartographie applicative et réseau maintenue à jour, inventaire des actifs et des comptes
+      d'administration, autorisation des seuls équipements maîtrisés.
+    controle_iso: ["5.9", "5.10", "8.9"]
+    guide_anssi: "ANSSI, Cartographie du système d'information (2018) ; Guide d'hygiène, mesures 4, 5 et 7"
+    hygiene: [4, 5, 7]
+    cout_deploiement: 8000
+    maintenance_annuelle: 2000
+    delai_semaines: 8
+    detection: 0.05
+    reduction_risque: {tous: 0.05}

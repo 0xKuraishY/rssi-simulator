@@ -1,0 +1,58 @@
+# Licence des contenus : CC BY-SA 4.0 — organisation fictive, données de calibrage pédagogiques
+id: hopital
+nom: Centre hospitalier de Valmont
+type_label: Hôpital 200 lits
+secteur: sante
+taille_employes: 850
+postes_travail: 700
+equipe_ssi: 1
+budget_it: 1200000
+budget_ssi: 72000
+chiffre_affaires: 75000000   # budget d'exploitation annuel
+difficulte: 4
+taux_clic_initial: 0.24   # part du personnel cliquant sur un faux hameçonnage (calibrage pédagogique)
+contraintes_reglementaires: [RGPD (données de santé), Hébergement de données de santé (HDS), NIS2 — entité essentielle]
+regimes: {rgpd: true, nis2: essentielle, hds: true, lpm_oiv: false, iso27001: false}
+traitement_grande_echelle: true
+facteur_cout: 0.45
+plafond_assurance: 3000000
+contrat_majeur: le partenariat de télé-imagerie avec le CHU régional
+description: >
+  Établissement public de santé de 200 lits : urgences, bloc opératoire, maternité, imagerie
+  et laboratoire. Le SI fait tourner le dossier patient informatisé, l'imagerie et des centaines
+  d'équipements biomédicaux connectés. L'équipe informatique est réduite et le parc vieillissant.
+enjeux:
+  - "Continuité des soins : une indisponibilité du SI impose le mode dégradé papier et des transferts de patients."
+  - "Secret médical et données de santé (données sensibles au sens de l'article 9 du RGPD)."
+  - "Secteur particulièrement ciblé par les rançongiciels selon les panoramas de l'ANSSI."
+  - "Équipements biomédicaux difficiles à corriger et à cloisonner."
+valeurs_metier:
+  - "Prise en charge des patients (urgences, bloc, hospitalisation)"
+  - "Continuité des examens d'imagerie et de biologie"
+  - "Confidentialité du secret médical"
+assets_critiques:
+  - {id: dpi, nom: Dossier patient informatisé (DPI), type: Application, criticite: primaire, dict: {D: 4, I: 4, C: 4, T: 3}}
+  - {id: pacs, nom: PACS (imagerie médicale), type: Application, criticite: primaire, dict: {D: 4, I: 3, C: 3, T: 2}}
+  - {id: sih, nom: SIH (gestion administrative des patients), type: Application, criticite: primaire, dict: {D: 3, I: 3, C: 3, T: 3}}
+  - {id: biomed, nom: Équipements biomédicaux connectés, type: Matériel, criticite: primaire, dict: {D: 4, I: 4, C: 2, T: 2}}
+  - {id: ad, nom: Annuaire Active Directory, type: Infrastructure, criticite: primaire, dict: {D: 4, I: 4, C: 3, T: 3}}
+  - {id: labo, nom: Système de gestion du laboratoire, type: Application, criticite: primaire, dict: {D: 4, I: 4, C: 3, T: 3}}
+  - {id: messagerie, nom: Messagerie et agenda, type: Service, criticite: secondaire, dict: {D: 2, I: 2, C: 3, T: 2}}
+  - {id: paie, nom: Paie et ressources humaines, type: Application, criticite: secondaire, dict: {D: 2, I: 3, C: 3, T: 2}}
+  - {id: web, nom: Site Internet institutionnel, type: Service, criticite: secondaire, dict: {D: 2, I: 2, C: 1, T: 1}}
+  - {id: wifi, nom: Wi-Fi patients et visiteurs, type: Réseau, criticite: secondaire, dict: {D: 1, I: 1, C: 1, T: 1}}
+probabilites_incidents:   # probabilité annuelle de base, sans mesure supplémentaire
+  ransomware: 0.30
+  phishing: 0.15
+  fuite_donnees: 0.12
+  supply_chain: 0.05
+  vpn_exploit: 0.08
+  ddos: 0.05
+  initie: 0.04
+  double_extorsion: 0.15
+  compromission_cloud: 0.08
+  ot_iot: 0.0
+socle_hygiene: [8, 10, 14, 17, 20, 22, 26]
+mesures_initiales: [M07, M39]
+iso_avancement_initial: 15
+exposition: {internet: 3, ecosysteme: 3, interne: 2, physique: 3}

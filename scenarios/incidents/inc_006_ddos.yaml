@@ -1,0 +1,183 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-006
+type: ddos
+title: Attaque par déni de service distribué revendiquée par des hacktivistes
+description: >
+  Un groupe hacktiviste annonce sur sa messagerie publique une « opération » contre des
+  organisations françaises. Quelques minutes plus tard, le site Internet, le portail des
+  usagers ou clients et les services en ligne de l'organisation sont saturés par un flux
+  massif de requêtes. L'attaque vise uniquement la disponibilité : aucune donnée n'est
+  dérobée, mais les services restent inaccessibles de quelques heures à trois jours.
+based_on: >
+  Campagnes de déni de service revendiquées par le groupe pro-russe NoName057(16) contre
+  des sites institutionnels et privés français en 2023 et 2024 ; vulnérabilité HTTP/2
+  « Rapid Reset » révélée en octobre 2023, à l'origine d'attaques d'une ampleur record.
+cve_references:
+  - id: CVE-2023-44487
+    nom: HTTP/2 Rapid Reset
+    description: >
+      Faiblesse du protocole HTTP/2 permettant d'ouvrir et d'annuler très rapidement des
+      flux pour épuiser les ressources des serveurs.
+initial_vector: Saturation des services exposés sur Internet par un réseau de machines et de volontaires
+attack_chain: [T1583.005, T1498.001, T1499.002, T1499.003]
+impact: {D: 4, I: 1, C: 1, T: 1}
+cout_min: 20000
+cout_max: 400000
+duree_semaines: {min: 1, max: 1}
+phase_detection_semaines: {min: 0, max: 0}
+obligations_declenchees: [nis2_24h, lpm_24h, nis2_72h, nis2_1mois]
+donnees_personnelles: false
+impact_reputation: {utilisateurs: -4, partenaires: -1, presse: -3}
+mesures_cles: [M35, M17, M23, M29, M04]
+references:
+  - "ANSSI, Comprendre et anticiper les attaques DDoS (2015)"
+  - "CERT-FR, avis relatif à la vulnérabilité HTTP/2 Rapid Reset (CVE-2023-44487, octobre 2023)"
+  - "ENISA, Threat Landscape (éditions 2023 et 2024), chapitre consacré aux menaces contre la disponibilité"
+  - "MITRE ATT&CK, T1498 Network Denial of Service et T1499 Endpoint Denial of Service"
+rex: >
+  Un déni de service ne compromet ni la confidentialité ni l'intégrité des données, mais
+  son impact sur les usagers ou clients et sur l'image est immédiat. La protection se
+  prépare avant l'attaque : contrat de filtrage avec l'opérateur ou un service de
+  distribution de contenu, architecture capable d'absorber les pics, contacts d'urgence
+  connus et modes dégradés pour les services essentiels. Une communication factuelle,
+  rappelant qu'aucune donnée n'a été volée, prive les hacktivistes de l'effet médiatique
+  qu'ils recherchent.
+messages:
+  detection:
+    - {de: "Supervision", texte: "Le trafic entrant est multiplié par plusieurs centaines ; le site et le portail ne répondent plus."}
+    - {de: "Veille", texte: "Un groupe hacktiviste revendique l'attaque sur sa chaîne publique, captures d'écran à l'appui."}
+  confinement:
+    - {de: "Opérateur réseau", texte: "Nous pouvons activer un filtrage du trafic en amont, à condition que votre contrat le prévoie."}
+  eradication:
+    - {de: "Équipe web", texte: "Une partie des requêtes exploite HTTP/2 ; nos serveurs frontaux ne sont pas à jour."}
+  reprise:
+    - {de: "Direction de la communication", texte: "Les médias demandent si des données ont été volées."}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Responsable infrastructure"
+    urgence: true
+    delai_secondes: 60
+    texte: >
+      Les services en ligne sont indisponibles. Quelle est votre première action ?
+    choix:
+      - id: A
+        texte: Activer le filtrage chez l'opérateur ou le service anti-DDoS et prioriser les services essentiels
+        qualite: bonne
+        effets: {cout_mult: 0.6, reputation: {utilisateurs: 1}}
+        feedback: >
+          Une attaque volumétrique ne se traite pas sur ses propres équipements : le
+          filtrage doit avoir lieu en amont, là où la bande passante le permet.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS (2015)"
+      - id: B
+        texte: Bloquer manuellement les adresses IP sources sur le pare-feu
+        qualite: moyenne
+        effets: {cout_mult: 1.0}
+        feedback: >
+          Utile contre une source limitée, mais inefficace face à des milliers d'adresses
+          changeantes et à une saturation du lien d'accès.
+        reference: "MITRE ATT&CK, T1498 Network Denial of Service"
+      - id: C
+        texte: Redémarrer les serveurs web en espérant que l'attaque cesse
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.4, reputation: {utilisateurs: -2, presse: -2}}
+        feedback: >
+          Le redémarrage ne change rien au volume de trafic et fait perdre un temps précieux.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS (2015)"
+  - id: D2
+    heure: 3
+    phase: confinement
+    de: "Direction de la communication"
+    texte: >
+      La revendication circule sur les réseaux sociaux. Comment communiquez-vous ?
+    choix:
+      - id: A
+        texte: Communiqué factuel - services indisponibles, aucune donnée dérobée, solutions alternatives pour les usagers ou clients
+        qualite: bonne
+        effets: {reputation: {utilisateurs: 2, presse: 3}}
+        feedback: >
+          L'objectif des hacktivistes est l'audience. Une communication sobre et utile
+          réduit leur visibilité et rassure les personnes.
+        reference: "ANSSI, Crise d'origine cyber, les clés d'une gestion opérationnelle et stratégique (2021)"
+      - id: B
+        texte: Répondre publiquement au groupe pour dénoncer l'attaque
+        qualite: mauvaise
+        effets: {reputation: {presse: -3}, risque: [{type: ddos, facteur: 1.5, semaines: 12}]}
+        feedback: >
+          Entrer en dialogue avec les attaquants leur offre la tribune qu'ils recherchent et
+          peut entraîner de nouvelles vagues.
+        reference: "Cybermalveillance.gouv.fr, ressources sur les attaques en déni de service"
+      - id: C
+        texte: Ne rien dire tant que les services ne sont pas rétablis
+        qualite: moyenne
+        defaut: true
+        effets: {reputation: {utilisateurs: -2, presse: -2}}
+        feedback: >
+          Le silence laisse le récit aux attaquants et alimente les rumeurs de vol de données.
+        reference: "ANSSI, Crise d'origine cyber, les clés d'une gestion opérationnelle et stratégique (2021)"
+  - id: D3
+    heure: 6
+    phase: eradication
+    de: "Responsable conformité"
+    texte: >
+      L'indisponibilité dure depuis six heures et touche des services essentiels. Faut-il
+      notifier ?
+    choix:
+      - id: A
+        texte: Évaluer le caractère important de l'incident et, s'il l'est, adresser l'alerte précoce à l'ANSSI dans les 24 heures
+        qualite: bonne
+        effets: {reputation: {regulateurs: 3}}
+        feedback: >
+          Une interruption prolongée d'un service essentiel peut constituer un incident
+          important au sens de NIS2, même sans vol de données.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 23"
+      - id: B
+        texte: Ne pas notifier, aucune donnée n'ayant été touchée
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {regulateurs: -4}}
+        feedback: >
+          Les obligations NIS2 et LPM portent sur la disponibilité des services autant que
+          sur la confidentialité. Le RGPD, lui, n'est pas concerné ici.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 23"
+      - id: C
+        texte: Notifier la CNIL par précaution
+        qualite: moyenne
+        effets: {reputation: {regulateurs: -1}}
+        feedback: >
+          Sans atteinte à des données personnelles, la CNIL n'est pas l'autorité compétente.
+          L'interlocuteur pour un incident de disponibilité est l'ANSSI.
+        reference: "RGPD, art. 4 §12 (définition de la violation de données)"
+  - id: D4
+    heure: 48
+    phase: reprise
+    de: "DSI"
+    texte: >
+      Les services sont rétablis. Quelles suites donnez-vous ?
+    choix:
+      - id: A
+        texte: Souscrire une protection anti-DDoS permanente, corriger les serveurs frontaux (HTTP/2) et tester un mode dégradé
+        qualite: bonne
+        effets: {cout_fixe: 25000, risque: [{type: ddos, facteur: 0.5, semaines: 52}]}
+        feedback: >
+          Les groupes hacktivistes reviennent souvent vers des cibles déjà visées. Une
+          protection en place et des serveurs corrigés réduisent fortement l'impact suivant.
+        reference: "CERT-FR, avis relatif à CVE-2023-44487"
+      - id: B
+        texte: Considérer l'incident comme clos, l'attaque ayant cessé
+        qualite: mauvaise
+        defaut: true
+        effets: {risque: [{type: ddos, facteur: 1.4, semaines: 26}]}
+        feedback: >
+          Sans changement, la prochaine vague produira le même effet.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS (2015)"
+      - id: C
+        texte: Augmenter la capacité des serveurs et de la bande passante
+        qualite: moyenne
+        effets: {cout_fixe: 30000, risque: [{type: ddos, facteur: 0.85, semaines: 52}]}
+        feedback: >
+          Absorber davantage aide face aux petites attaques, mais les attaques volumétriques
+          dépassent la capacité de la plupart des organisations.
+        reference: "ANSSI, Comprendre et anticiper les attaques DDoS (2015)"

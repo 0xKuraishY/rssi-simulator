@@ -1,0 +1,104 @@
+# ISO/IEC 27001:2022 — Annexe A : 93 contrôles (4 thèmes). Intitulés traduits librement
+# en français à des fins pédagogiques ; se référer à la norme NF EN ISO/IEC 27001:2023.
+themes:
+  - nom: Organisationnels
+    controles:
+      - {id: "5.1", titre: Politiques de sécurité de l'information}
+      - {id: "5.2", titre: Fonctions et responsabilités liées à la sécurité de l'information}
+      - {id: "5.3", titre: Séparation des tâches}
+      - {id: "5.4", titre: Responsabilités de la direction}
+      - {id: "5.5", titre: Relations avec les autorités}
+      - {id: "5.6", titre: Relations avec des groupes d'intérêt spécifiques}
+      - {id: "5.7", titre: Renseignement sur les menaces}
+      - {id: "5.8", titre: Sécurité de l'information dans la gestion de projet}
+      - {id: "5.9", titre: Inventaire des informations et autres actifs associés}
+      - {id: "5.10", titre: Utilisation correcte des informations et autres actifs associés}
+      - {id: "5.11", titre: Restitution des actifs}
+      - {id: "5.12", titre: Classification des informations}
+      - {id: "5.13", titre: Marquage des informations}
+      - {id: "5.14", titre: Transfert des informations}
+      - {id: "5.15", titre: Contrôle d'accès}
+      - {id: "5.16", titre: Gestion des identités}
+      - {id: "5.17", titre: Informations d'authentification}
+      - {id: "5.18", titre: Droits d'accès}
+      - {id: "5.19", titre: Sécurité de l'information dans les relations avec les fournisseurs}
+      - {id: "5.20", titre: La sécurité de l'information dans les accords conclus avec les fournisseurs}
+      - {id: "5.21", titre: Gestion de la sécurité de l'information dans la chaîne d'approvisionnement TIC}
+      - {id: "5.22", titre: Surveillance, revue et gestion des changements des services fournisseurs}
+      - {id: "5.23", titre: Sécurité de l'information dans l'utilisation de services en nuage}
+      - {id: "5.24", titre: Planification et préparation de la gestion des incidents}
+      - {id: "5.25", titre: Évaluation des événements de sécurité et prise de décision}
+      - {id: "5.26", titre: Réponse aux incidents de sécurité de l'information}
+      - {id: "5.27", titre: Tirer des enseignements des incidents de sécurité}
+      - {id: "5.28", titre: Collecte des preuves}
+      - {id: "5.29", titre: Sécurité de l'information durant une perturbation}
+      - {id: "5.30", titre: Préparation des TIC pour la continuité d'activité}
+      - {id: "5.31", titre: Exigences légales, statutaires, réglementaires et contractuelles}
+      - {id: "5.32", titre: Droits de propriété intellectuelle}
+      - {id: "5.33", titre: Protection des enregistrements}
+      - {id: "5.34", titre: Protection de la vie privée et des données à caractère personnel}
+      - {id: "5.35", titre: Revue indépendante de la sécurité de l'information}
+      - {id: "5.36", titre: Conformité aux politiques, règles et normes de sécurité}
+      - {id: "5.37", titre: Procédures d'exploitation documentées}
+  - nom: Liés aux personnes
+    controles:
+      - {id: "6.1", titre: Sélection des candidats}
+      - {id: "6.2", titre: Conditions générales d'embauche}
+      - {id: "6.3", titre: Sensibilisation, enseignement et formation en sécurité de l'information}
+      - {id: "6.4", titre: Processus disciplinaire}
+      - {id: "6.5", titre: Responsabilités consécutives à la fin ou à la modification du contrat de travail}
+      - {id: "6.6", titre: Engagements de confidentialité ou de non-divulgation}
+      - {id: "6.7", titre: Travail à distance}
+      - {id: "6.8", titre: Déclaration des événements de sécurité de l'information}
+  - nom: Physiques
+    controles:
+      - {id: "7.1", titre: Périmètres de sécurité physique}
+      - {id: "7.2", titre: Contrôles physiques des accès}
+      - {id: "7.3", titre: Sécurisation des bureaux, des salles et des installations}
+      - {id: "7.4", titre: Surveillance de la sécurité physique}
+      - {id: "7.5", titre: Protection contre les menaces physiques et environnementales}
+      - {id: "7.6", titre: Travail dans les zones sécurisées}
+      - {id: "7.7", titre: Bureau propre et écran vide}
+      - {id: "7.8", titre: Emplacement et protection du matériel}
+      - {id: "7.9", titre: Sécurité des actifs hors des locaux}
+      - {id: "7.10", titre: Supports de stockage}
+      - {id: "7.11", titre: Services généraux}
+      - {id: "7.12", titre: Sécurité du câblage}
+      - {id: "7.13", titre: Maintenance du matériel}
+      - {id: "7.14", titre: Mise au rebut ou recyclage sécurisé(e) du matériel}
+  - nom: Technologiques
+    controles:
+      - {id: "8.1", titre: Terminaux finaux des utilisateurs}
+      - {id: "8.2", titre: Droits d'accès privilégiés}
+      - {id: "8.3", titre: Restriction d'accès aux informations}
+      - {id: "8.4", titre: Accès aux codes source}
+      - {id: "8.5", titre: Authentification sécurisée}
+      - {id: "8.6", titre: Dimensionnement}
+      - {id: "8.7", titre: Protection contre les programmes malveillants}
+      - {id: "8.8", titre: Gestion des vulnérabilités techniques}
+      - {id: "8.9", titre: Gestion des configurations}
+      - {id: "8.10", titre: Suppression des informations}
+      - {id: "8.11", titre: Masquage des données}
+      - {id: "8.12", titre: Prévention de la fuite de données}
+      - {id: "8.13", titre: Sauvegarde des informations}
+      - {id: "8.14", titre: Redondance des moyens de traitement de l'information}
+      - {id: "8.15", titre: Journalisation}
+      - {id: "8.16", titre: Activités de surveillance}
+      - {id: "8.17", titre: Synchronisation des horloges}
+      - {id: "8.18", titre: Utilisation de programmes utilitaires à privilèges}
+      - {id: "8.19", titre: Installation de logiciels sur des systèmes en exploitation}
+      - {id: "8.20", titre: Sécurité des réseaux}
+      - {id: "8.21", titre: Sécurité des services réseau}
+      - {id: "8.22", titre: Cloisonnement des réseaux}
+      - {id: "8.23", titre: Filtrage web}
+      - {id: "8.24", titre: Utilisation de la cryptographie}
+      - {id: "8.25", titre: Cycle de vie de développement sécurisé}
+      - {id: "8.26", titre: Exigences de sécurité des applications}
+      - {id: "8.27", titre: Principes d'ingénierie et d'architecture des systèmes sécurisés}
+      - {id: "8.28", titre: Codage sécurisé}
+      - {id: "8.29", titre: Tests de sécurité dans le développement et l'acceptation}
+      - {id: "8.30", titre: Développement externalisé}
+      - {id: "8.31", titre: Séparation des environnements de développement, de test et de production}
+      - {id: "8.32", titre: Gestion des changements}
+      - {id: "8.33", titre: Informations de test}
+      - {id: "8.34", titre: Protection des systèmes d'information en cours d'audit et de test}

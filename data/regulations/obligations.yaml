@@ -1,0 +1,47 @@
+# Synthèse des textes réglementaires modélisés dans RSSI Simulator (affichée dans l'écran Conformité
+# et le rapport). Licence des contenus : CC BY-SA 4.0. Vérifier les textes en vigueur avant
+# tout usage juridique : ce jeu est un outil pédagogique, pas un conseil juridique.
+regimes:
+  rgpd:
+    nom: Règlement général sur la protection des données (UE) 2016/679
+    points:
+      - "Art. 30 : registre des activités de traitement."
+      - "Art. 33 : notification de la violation à la CNIL dans les 72 heures après en avoir pris connaissance."
+      - "Art. 34 : information des personnes concernées lorsque la violation engendre un risque élevé."
+      - "Art. 37-39 : désignation et missions du délégué à la protection des données."
+      - "Art. 83 : amendes jusqu'à 10 M€ / 2 % du CA (art. 83 §4) ou 20 M€ / 4 % du CA (art. 83 §5)."
+    source: "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+  nis2:
+    nom: Directive (UE) 2022/2555 (NIS2) et sa transposition française
+    points:
+      - "Art. 20 : responsabilité et formation des organes de direction."
+      - "Art. 21 : mesures de gestion des risques (analyse de risques, gestion des incidents, continuité, chaîne d'approvisionnement…)."
+      - "Art. 23 : alerte précoce sous 24 h, notification sous 72 h, rapport final sous un mois."
+      - "Art. 34 : amendes jusqu'à 10 M€ ou 2 % du CA mondial (entités essentielles), 7 M€ ou 1,4 % (entités importantes), le montant le plus élevé étant retenu."
+    source: "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    note: "État de la transposition française et régime applicable aux collectivités à vérifier sur cyber.gouv.fr (MonEspaceNIS2)."
+  lpm_oiv:
+    nom: Loi de programmation militaire — opérateurs d'importance vitale
+    points:
+      - "Code de la défense, art. L.1332-6-1 : règles de sécurité des systèmes d'information d'importance vitale (SIIV)."
+      - "Code de la défense, art. L.1332-6-2 : déclaration sans délai des incidents à l'ANSSI."
+      - "Code de la défense, art. L.1332-7 : sanctions pénales en cas de manquement."
+    source: "https://www.legifrance.gouv.fr"
+  hds:
+    nom: Hébergement de données de santé et signalement des incidents
+    points:
+      - "Code de la santé publique, art. L.1111-8 : hébergement de données de santé par un hébergeur certifié HDS."
+      - "Code de la santé publique, art. L.1111-8-2 : signalement sans délai des incidents graves de sécurité à l'ARS."
+    source: "https://esante.gouv.fr"
+  assurance:
+    nom: Assurance des risques cyber (loi LOPMI du 24 janvier 2023)
+    points:
+      - "Code des assurances, art. L.12-10-1 : l'indemnisation des pertes liées à une cyberattaque est subordonnée au dépôt d'une plainte au plus tard 72 heures après la connaissance de l'atteinte."
+    source: "https://www.legifrance.gouv.fr"
+  iso27001:
+    nom: ISO/IEC 27001:2022
+    points:
+      - "Système de management de la sécurité de l'information (SMSI), certification par un organisme accrédité."
+      - "Annexe A : 93 contrôles répartis en 4 thèmes (organisationnels, personnes, physiques, technologiques)."
+      - "Audits de surveillance annuels ; suspension possible en cas de non-conformité majeure."
+    source: "https://www.iso.org/standard/27001"

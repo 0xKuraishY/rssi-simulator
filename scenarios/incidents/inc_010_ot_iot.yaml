@@ -1,0 +1,189 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-010
+type: ot_iot
+title: Prise de contrôle d'automates sur le réseau de production
+description: >
+  Un accès de télémaintenance laissé ouvert pour un prestataire, protégé par des
+  identifiants par défaut, permet à un attaquant d'entrer dans le réseau technique. Le
+  réseau n'étant pas cloisonné, il découvre les automates programmables et les modifie :
+  consignes altérées, alarmes masquées, arrêts intempestifs. La production ou le service
+  technique est interrompu et la sécurité des personnes et des installations est mise en
+  jeu tant que l'intégrité des automates n'est pas vérifiée.
+based_on: >
+  Attaques recensées contre des automates et interfaces exposés sur Internet avec des
+  identifiants par défaut (notamment fin 2023 contre des automates de traitement d'eau,
+  selon les autorités américaines) ; vulnérabilité CVE-2021-22681 des contrôleurs
+  Rockwell Logix, signalée en 2021, permettant de contourner la vérification d'accès.
+cve_references:
+  - id: CVE-2021-22681
+    nom: Contournement d'authentification des contrôleurs Rockwell Logix
+    description: >
+      Clé insuffisamment protégée dans les logiciels Studio 5000 Logix Designer et RSLogix
+      5000, permettant à un attaquant de se connecter à un contrôleur Logix sans
+      vérification et d'en modifier la configuration ou le programme.
+initial_vector: Accès de télémaintenance exposé avec identifiants par défaut, sans cloisonnement IT / OT
+attack_chain: [T0822, T0812, T0886, T0846, T0843, T0831, T0878, T0880, T0828]
+impact: {D: 4, I: 4, C: 2, T: 3}
+cout_min: 150000
+cout_max: 3000000
+duree_semaines: {min: 2, max: 10}
+phase_detection_semaines: {min: 0, max: 6}
+organisations: [pme_industrie, telecom]
+obligations_declenchees: [nis2_24h, lpm_24h, nis2_72h, nis2_1mois]
+donnees_personnelles: false
+impact_reputation: {utilisateurs: -4, partenaires: -5, regulateurs: -3, presse: -5}
+mesures_cles: [M19, M34, M18, M40, M17]
+references:
+  - "ANSSI, La cybersécurité des systèmes industriels - Méthode de classification et mesures principales (2014)"
+  - "ANSSI, La cybersécurité des systèmes industriels - Mesures détaillées (2014)"
+  - "CISA, avis ICS relatif à CVE-2021-22681 (Rockwell Automation Logix Controllers, février 2021)"
+  - "MITRE ATT&CK for ICS, T0812 Default Credentials et T0843 Program Download"
+rex: >
+  Trois faiblesses se sont additionnées : un accès distant de prestataire permanent, des
+  identifiants jamais changés et un réseau industriel non séparé du reste. En
+  environnement industriel, la priorité n'est pas la donnée mais la sécurité des personnes
+  et des installations : passer en mode manuel ou en arrêt sûr prime sur la continuité de
+  production. Cloisonner l'OT, encadrer la télémaintenance (accès ouverts à la demande,
+  tracés, authentifiés) et disposer de sauvegardes des programmes automates de référence
+  conditionnent la reprise.
+messages:
+  detection:
+    - {de: "Chef d'atelier / exploitation technique", texte: "Plusieurs équipements se sont arrêtés sans alarme ; les consignes affichées sur la supervision ne correspondent plus à nos réglages."}
+    - {de: "Automaticien", texte: "Le programme d'un automate a été modifié cette nuit. Personne de l'équipe n'est intervenu."}
+  confinement:
+    - {de: "Responsable sécurité des installations", texte: "Nous pouvons passer les lignes en mode manuel, mais cela réduit fortement la capacité."}
+  eradication:
+    - {de: "Prestataire de réponse", texte: "L'attaquant est entré par le routeur de télémaintenance du prestataire, identifiants d'usine inchangés."}
+  reprise:
+    - {de: "Direction", texte: "Les clients ou usagers attendent. Quand pouvons-nous redémarrer ?"}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Responsable sécurité des installations"
+    urgence: true
+    delai_secondes: 60
+    texte: >
+      Les automates ont un comportement anormal et les alarmes ne sont plus fiables. Que
+      faites-vous immédiatement ?
+    choix:
+      - id: A
+        texte: Passer les installations en mode manuel ou en arrêt sûr et couper l'accès de télémaintenance
+        qualite: bonne
+        effets: {cout_mult: 0.75, reputation: {regulateurs: 2}}
+        feedback: >
+          La sécurité des personnes prime. Couper l'accès distant interrompt l'action de
+          l'attaquant ; le mode manuel permet de ne plus dépendre d'automates non fiables.
+        reference: "ANSSI, La cybersécurité des systèmes industriels - Mesures détaillées (2014)"
+      - id: B
+        texte: Couper la télémaintenance mais maintenir la production automatique
+        qualite: moyenne
+        effets: {cout_mult: 1.1, risque: [{type: ot_iot, facteur: 1.2, semaines: 12}]}
+        feedback: >
+          L'attaquant n'a plus la main, mais les automates exécutent peut-être encore un
+          programme modifié : le risque physique demeure.
+        reference: "MITRE ATT&CK for ICS, T0831 Manipulation of Control"
+      - id: C
+        texte: Maintenir la production en attendant de comprendre
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.7, duree_semaines: 3, reputation: {regulateurs: -5, presse: -5, partenaires: -3}}
+        feedback: >
+          Avec des alarmes masquées, un incident physique (casse, pollution, blessure) peut
+          survenir sans signe avant-coureur.
+        reference: "MITRE ATT&CK for ICS, T0880 Loss of Safety"
+  - id: D2
+    heure: 6
+    phase: confinement
+    de: "Direction générale"
+    texte: >
+      Qui prévenir ?
+    choix:
+      - id: A
+        texte: Signaler à l'ANSSI / CERT-FR et à l'autorité compétente, déposer plainte, prévenir le prestataire de télémaintenance et les autorités de sûreté le cas échéant
+        qualite: bonne
+        effets: {reputation: {regulateurs: 4, partenaires: 1}}
+        feedback: >
+          Une attaque sur des systèmes industriels peut toucher d'autres sites équipés du
+          même prestataire ; l'alerte précoce sert aussi la collectivité.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 23"
+      - id: B
+        texte: Prévenir uniquement le prestataire de télémaintenance
+        qualite: moyenne
+        effets: {reputation: {regulateurs: -2}}
+        feedback: >
+          Indispensable pour couper ses accès, mais insuffisant au regard des obligations de
+          notification.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 25 (interconnexions avec les partenaires)"
+      - id: C
+        texte: Traiter comme une panne technique, sans signalement
+        qualite: mauvaise
+        defaut: true
+        effets: {reputation: {regulateurs: -6, presse: -3}}
+        feedback: >
+          Qualifier une attaque en panne prive l'organisation d'appui et l'expose à un
+          manquement aux obligations NIS2 ou LPM.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 23"
+  - id: D3
+    heure: 48
+    phase: eradication
+    de: "Automaticien"
+    texte: >
+      Comment remettez-vous les automates en état ?
+    choix:
+      - id: A
+        texte: Recharger les programmes depuis des sauvegardes de référence vérifiées, comparer configurations et micrologiciels, changer tous les identifiants par défaut
+        qualite: bonne
+        effets: {cout_fixe: 40000, duree_semaines: 1, risque: [{type: ot_iot, facteur: 0.7, semaines: 52}]}
+        feedback: >
+          On ne peut faire confiance qu'à un programme dont l'intégrité est vérifiée par
+          rapport à une référence conservée hors ligne.
+        reference: "ANSSI, La cybersécurité des systèmes industriels - Mesures détaillées (2014)"
+      - id: B
+        texte: Corriger manuellement les consignes visiblement modifiées
+        qualite: mauvaise
+        defaut: true
+        effets: {duree_semaines: -1, risque: [{type: ot_iot, facteur: 1.6, semaines: 26}]}
+        feedback: >
+          D'autres modifications, moins visibles, peuvent subsister dans la logique des
+          programmes et se déclencher plus tard.
+        reference: "MITRE ATT&CK for ICS, T0843 Program Download"
+      - id: C
+        texte: Faire intervenir le constructeur pour réinstaller l'ensemble des automates à neuf
+        qualite: moyenne
+        effets: {cout_fixe: 90000, duree_semaines: 3, risque: [{type: ot_iot, facteur: 0.8, semaines: 52}]}
+        feedback: >
+          Solution sûre mais longue et coûteuse ; sans changement des identifiants et de
+          l'accès distant, le même scénario peut se reproduire.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 12 (changer les identifiants par défaut)"
+  - id: D4
+    heure: 120
+    phase: reprise
+    de: "Direction technique"
+    texte: >
+      Comment encadrez-vous désormais le réseau technique et la télémaintenance ?
+    choix:
+      - id: A
+        texte: Cloisonner le réseau industriel (zone tampon, flux filtrés), ouvrir la télémaintenance à la demande via une passerelle tracée et authentifiée
+        qualite: bonne
+        effets: {cout_fixe: 60000, reputation: {partenaires: 3}, risque: [{type: ot_iot, facteur: 0.5, semaines: 104}]}
+        feedback: >
+          Le cloisonnement et la maîtrise des accès tiers sont les deux mesures structurantes
+          recommandées pour les systèmes industriels.
+        reference: "ANSSI, La cybersécurité des systèmes industriels - Méthode de classification et mesures principales (2014)"
+      - id: B
+        texte: Rouvrir l'accès du prestataire tel qu'il était, avec un nouveau mot de passe
+        qualite: mauvaise
+        defaut: true
+        effets: {risque: [{type: ot_iot, facteur: 1.3, semaines: 52}]}
+        feedback: >
+          Un accès permanent, non tracé, vers un réseau à plat reste la principale faiblesse.
+        reference: "ANSSI, Guide d'hygiène informatique, mesures 19 (segmentation) et 25 (interconnexions)"
+      - id: C
+        texte: Supprimer toute télémaintenance et imposer des interventions sur site
+        qualite: moyenne
+        effets: {cout_fixe: 20000, duree_semaines: 1, risque: [{type: ot_iot, facteur: 0.8, semaines: 52}]}
+        feedback: >
+          Réduit nettement l'exposition, mais allonge les délais d'intervention et pousse
+          parfois à des contournements non maîtrisés.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 23 (cloisonner les services exposés)"

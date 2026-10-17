@@ -1,0 +1,56 @@
+# Licence des contenus : CC BY-SA 4.0 — organisation fictive, données de calibrage pédagogiques
+id: esn
+nom: Numeris Conseil
+type_label: ESN 400 collaborateurs
+secteur: numerique
+taille_employes: 400
+postes_travail: 450
+equipe_ssi: 3
+budget_it: 900000
+budget_ssi: 63000
+chiffre_affaires: 40000000
+difficulte: 3
+taux_clic_initial: 0.12   # part du personnel cliquant sur un faux hameçonnage (calibrage pédagogique)
+contraintes_reglementaires: [RGPD (sous-traitant art. 28), NIS2 — entité importante, Clients OIV / OSE, Accès distants aux SI clients]
+regimes: {rgpd: true, nis2: importante, hds: false, lpm_oiv: false, iso27001: true}
+traitement_grande_echelle: false
+facteur_cout: 0.25
+plafond_assurance: 3000000
+contrat_majeur: le contrat d'infogérance d'un client opérateur d'importance vitale
+description: >
+  Entreprise de services du numérique : infogérance, développement et conseil. Les consultants
+  disposent d'accès privilégiés aux SI de dizaines de clients, dont des opérateurs critiques.
+  Une compromission de l'ESN est une porte d'entrée vers tous ses clients.
+enjeux:
+  - "Risque de rebond vers les clients (chaîne d'approvisionnement) : vous êtes le maillon ciblé."
+  - "Secrets d'accès clients nombreux et dispersés."
+  - "Exigences contractuelles (ISO 27001, plan d'assurance sécurité, notification sous 24 h)."
+  - "Forte dépendance à Microsoft 365 et aux outils SaaS."
+valeurs_metier:
+  - "Exploitation des SI des clients (infogérance)"
+  - "Livraison des projets de développement"
+  - "Confiance des clients critiques"
+assets_critiques:
+  - {id: acces_clients, nom: Accès distants aux SI des clients, type: Réseau, criticite: primaire, dict: {D: 3, I: 4, C: 4, T: 4}}
+  - {id: coffre, nom: Coffre-fort des identifiants clients, type: Application, criticite: primaire, dict: {D: 3, I: 4, C: 4, T: 4}}
+  - {id: forge, nom: Forge logicielle et chaîne CI/CD, type: Application, criticite: primaire, dict: {D: 3, I: 4, C: 3, T: 3}}
+  - {id: m365, nom: Tenant Microsoft 365 / Entra ID, type: Service, criticite: primaire, dict: {D: 3, I: 3, C: 4, T: 3}}
+  - {id: ad, nom: Annuaire Active Directory interne, type: Infrastructure, criticite: primaire, dict: {D: 3, I: 4, C: 3, T: 3}}
+  - {id: crm, nom: ERP / CRM commercial, type: Application, criticite: secondaire, dict: {D: 2, I: 3, C: 3, T: 2}}
+  - {id: laptops, nom: Portables des consultants, type: Matériel, criticite: secondaire, dict: {D: 2, I: 2, C: 3, T: 2}}
+  - {id: wiki, nom: Wiki et documentation interne, type: Service, criticite: secondaire, dict: {D: 1, I: 2, C: 3, T: 1}}
+probabilites_incidents:
+  ransomware: 0.12
+  phishing: 0.18
+  fuite_donnees: 0.08
+  supply_chain: 0.15
+  vpn_exploit: 0.10
+  ddos: 0.03
+  initie: 0.06
+  double_extorsion: 0.12
+  compromission_cloud: 0.18
+  ot_iot: 0.0
+socle_hygiene: [1, 8, 10, 14, 16, 17, 18, 22, 24, 31]
+mesures_initiales: [M07, M21, M39]
+iso_avancement_initial: 40
+exposition: {internet: 3, ecosysteme: 4, interne: 2, physique: 1}

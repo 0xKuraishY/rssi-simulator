@@ -1,0 +1,192 @@
+# Licence des contenus : CC BY-SA 4.0
+id: INC-004
+type: supply_chain
+title: Mise à jour piégée d'un logiciel de supervision
+description: >
+  L'éditeur d'un logiciel de supervision utilisé par l'organisation a été compromis : sa
+  chaîne de compilation a inséré une porte dérobée dans une mise à jour signée et diffusée
+  par le canal officiel. La porte dérobée reste dormante plusieurs jours, puis contacte
+  discrètement ses serveurs. Pour une partie des clients seulement, l'attaquant s'en sert
+  pour rebondir dans le réseau, voler des secrets d'authentification et accéder à la
+  messagerie et aux services en ligne.
+based_on: >
+  Compromission de SolarWinds Orion révélée en décembre 2020 (porte dérobée SUNBURST,
+  insérée dans des mises à jour signées installées, selon l'éditeur, par près de 18 000 clients) ; d'autres
+  attaques par la chaîne d'approvisionnement logicielle ont suivi, comme celle visant
+  3CX en 2023.
+cve_references:
+  - id: CVE-2020-10148
+    nom: Contournement d'authentification de l'API SolarWinds Orion
+    description: >
+      Vulnérabilité de l'API Orion exploitée pour déposer la porte dérobée web SUPERNOVA.
+      Elle est distincte de SUNBURST, qui ne repose sur aucune CVE puisqu'il s'agit d'un
+      code malveillant inséré par l'attaquant dans le produit lui-même.
+initial_vector: Mise à jour logicielle légitime et signée, compromise chez l'éditeur
+attack_chain: [T1195.002, T1553.002, T1497, T1071.004, T1078, T1550.001, T1606.002, T1098.001, T1114.002]
+impact: {D: 2, I: 4, C: 4, T: 4}
+cout_min: 200000
+cout_max: 2500000
+duree_semaines: {min: 8, max: 24}
+phase_detection_semaines: {min: 8, max: 30}
+obligations_declenchees: [nis2_24h, lpm_24h, hds_signalement, cnil_72h, nis2_72h, nis2_1mois]
+donnees_personnelles: true
+impact_reputation: {utilisateurs: -3, partenaires: -6, regulateurs: -3, presse: -5}
+mesures_cles: [M33, M18, M13, M29, M32, M40]
+references:
+  - "CISA, Emergency Directive 21-01 — Mitigate SolarWinds Orion Code Compromise (décembre 2020)"
+  - "CERT-FR, publications relatives à la compromission de SolarWinds Orion (décembre 2020)"
+  - "ENISA, Threat Landscape for Supply Chain Attacks (juillet 2021)"
+  - "MITRE ATT&CK, T1195.002 Compromise Software Supply Chain"
+rex: >
+  Aucune vigilance de l'utilisateur ne pouvait empêcher l'installation : la mise à jour
+  était signée et provenait de l'éditeur. Ce qui a fait la différence, c'est ce que
+  l'outil compromis pouvait atteindre. Un logiciel de supervision dispose souvent de
+  privilèges étendus et d'un accès sortant vers Internet ; le cloisonner, restreindre ses
+  flux, journaliser son activité et cartographier ses comptes de service réduit fortement
+  la portée d'une telle compromission. L'évaluation des fournisseurs et les clauses de
+  notification d'incident complètent le dispositif.
+messages:
+  detection:
+    - {de: "CERT-FR / bulletin de l'éditeur", texte: "Une version du logiciel de supervision contient une porte dérobée. Les clients doivent rechercher des indicateurs de compromission."}
+    - {de: "Exploitation", texte: "Nos serveurs de supervision ont installé la version concernée il y a plusieurs mois."}
+  confinement:
+    - {de: "Équipe réseau", texte: "Les serveurs de supervision ont contacté des domaines figurant dans la liste d'indicateurs."}
+  eradication:
+    - {de: "Prestataire de réponse", texte: "Nous trouvons des traces d'utilisation de comptes de service et de jetons d'authentification falsifiés pour accéder à la messagerie en ligne."}
+  reprise:
+    - {de: "Direction", texte: "Pouvons-nous encore faire confiance à nos fournisseurs logiciels ?"}
+decisions:
+  - id: D1
+    heure: 1
+    phase: confinement
+    de: "Responsable exploitation"
+    urgence: true
+    delai_secondes: 120
+    texte: >
+      Les serveurs de supervision exécutent la version piégée. Que faites-vous ?
+    choix:
+      - id: A
+        texte: Déconnecter les serveurs de supervision du réseau en conservant leur état pour l'analyse, et bloquer les indicateurs connus
+        qualite: bonne
+        effets: {cout_mult: 0.8, reputation: {partenaires: 1}}
+        feedback: >
+          Isoler sans détruire coupe le canal de l'attaquant tout en préservant les preuves
+          nécessaires pour savoir s'il est allé plus loin.
+        reference: "CISA, Emergency Directive 21-01"
+      - id: B
+        texte: Désinstaller le logiciel et réinstaller une version saine
+        qualite: moyenne
+        effets: {cout_mult: 1.0, duree_semaines: 2}
+        feedback: >
+          La porte dérobée disparaît, mais les preuves aussi ; et si l'attaquant a déjà
+          rebondi ailleurs, le problème reste entier.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 40 (procédure de gestion des incidents)"
+      - id: C
+        texte: Attendre le correctif de l'éditeur
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.5, duree_semaines: 4, reputation: {partenaires: -3, regulateurs: -2}}
+        feedback: >
+          Le correctif empêche de nouvelles infections mais ne chasse pas un attaquant déjà
+          installé. L'isolement doit être immédiat.
+        reference: "CISA, Emergency Directive 21-01"
+  - id: D2
+    heure: 12
+    phase: confinement
+    de: "Direction générale"
+    texte: >
+      Faut-il mobiliser des moyens externes et prévenir les autorités, alors que l'on ne sait
+      pas encore si l'organisation a été réellement ciblée ?
+    choix:
+      - id: A
+        texte: Signaler à l'ANSSI / CERT-FR et à l'autorité compétente, et mobiliser un prestataire de réponse qualifié
+        qualite: bonne
+        effets: {cout_fixe: 60000, reputation: {regulateurs: 4}}
+        feedback: >
+          Dans une campagne de grande ampleur, le partage d'indicateurs et l'appui d'experts
+          accélèrent la recherche de compromission. Le signalement précoce est attendu par
+          les régimes NIS2 et LPM.
+        reference: "Directive (UE) 2022/2555 (NIS2), art. 23"
+      - id: B
+        texte: Mener l'investigation en interne et ne signaler qu'en cas de compromission avérée
+        qualite: moyenne
+        effets: {cout_mult: 1.1, reputation: {regulateurs: -2}}
+        feedback: >
+          Les équipes internes connaissent le SI, mais la recherche d'un attaquant avancé
+          demande des outils et une expérience spécifiques.
+        reference: "ANSSI, référentiel PRIS (prestataires de réponse aux incidents de sécurité)"
+      - id: C
+        texte: Considérer que l'organisation n'est pas une cible prioritaire et clore le sujet
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_mult: 1.6, duree_semaines: 6, reputation: {regulateurs: -5, partenaires: -4}, risque: [{type: supply_chain, facteur: 1.4, semaines: 52}]}
+        feedback: >
+          L'attaquant choisit ses cibles parmi les clients infectés ; on ne peut pas
+          présumer en être exclu sans investigation.
+        reference: "ENISA, Threat Landscape for Supply Chain Attacks (2021)"
+  - id: D3
+    heure: 72
+    phase: eradication
+    de: "Prestataire de réponse"
+    texte: >
+      Des jetons d'authentification ont été falsifiés pour accéder aux services en ligne.
+      Quelle remédiation lancez-vous ?
+    choix:
+      - id: A
+        texte: Renouveler les secrets de l'infrastructure d'identité (certificats de signature, comptes de service, comptes privilégiés) selon un plan coordonné
+        qualite: bonne
+        effets: {cout_fixe: 80000, duree_semaines: 2, risque: [{type: supply_chain, facteur: 0.7, semaines: 52}]}
+        feedback: >
+          Tant que l'attaquant détient les secrets qui permettent de fabriquer des jetons,
+          changer les mots de passe des utilisateurs ne suffit pas.
+        reference: "ANSSI, Remédiation de l'Active Directory (2023)"
+      - id: B
+        texte: Réinitialiser les mots de passe de tous les utilisateurs
+        qualite: moyenne
+        effets: {cout_fixe: 20000, risque: [{type: supply_chain, facteur: 1.1, semaines: 26}]}
+        feedback: >
+          Mesure visible mais insuffisante : les jetons falsifiés ne dépendent pas des mots
+          de passe des utilisateurs.
+        reference: "MITRE ATT&CK, T1606.002 SAML Tokens"
+      - id: C
+        texte: Supprimer les comptes suspects identifiés et surveiller
+        qualite: mauvaise
+        defaut: true
+        effets: {duree_semaines: 4, risque: [{type: supply_chain, facteur: 1.5, semaines: 52}], reputation: {partenaires: -3}}
+        feedback: >
+          Un attaquant avancé conserve plusieurs moyens d'accès. Une remédiation partielle
+          l'alerte sans l'évincer.
+        reference: "ANSSI, Remédiation de l'Active Directory (2023)"
+  - id: D4
+    heure: 240
+    phase: reprise
+    de: "Direction des achats"
+    texte: >
+      Comment réduisez-vous durablement le risque lié aux logiciels tiers ?
+    choix:
+      - id: A
+        texte: Cartographier les logiciels à privilèges, cloisonner leurs flux, journaliser leur activité et intégrer des exigences de sécurité dans les contrats
+        qualite: bonne
+        effets: {cout_fixe: 40000, reputation: {partenaires: 3}, risque: [{type: supply_chain, facteur: 0.6, semaines: 104}]}
+        feedback: >
+          On ne peut pas éliminer la confiance accordée aux éditeurs, mais on peut limiter ce
+          qu'un logiciel compromis est capable d'atteindre.
+        reference: "ANSSI, Guide d'hygiène informatique, mesures 4, 19 et 25"
+      - id: B
+        texte: Changer d'éditeur sans autre mesure
+        qualite: mauvaise
+        defaut: true
+        effets: {cout_fixe: 60000, duree_semaines: 2, risque: [{type: supply_chain, facteur: 1.0, semaines: 52}]}
+        feedback: >
+          Tout éditeur peut être compromis. Changer de produit sans revoir l'architecture
+          déplace le risque sans le réduire.
+        reference: "ENISA, Threat Landscape for Supply Chain Attacks (2021)"
+      - id: C
+        texte: Retarder systématiquement l'application des mises à jour de quelques semaines
+        qualite: moyenne
+        effets: {risque: [{type: supply_chain, facteur: 0.95, semaines: 52}, {type: vpn_exploit, facteur: 1.2, semaines: 52}]}
+        feedback: >
+          Un délai d'observation peut se discuter pour certains produits, mais il retarde aussi
+          les correctifs de sécurité urgents et n'aurait pas suffi ici : la porte dérobée est
+          restée inaperçue des mois.
+        reference: "ANSSI, Guide d'hygiène informatique, mesure 34 (politique de mise à jour)"

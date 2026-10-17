@@ -1,0 +1,66 @@
+# ANSSI — Guide d'hygiène informatique : renforcer la sécurité de son système d'information
+# en 42 mesures (version 2.0, 2017). Intitulés résumés. Source : cyber.gouv.fr
+# Publication réutilisée selon les termes de la Licence Ouverte d'Etalab.
+themes:
+  - nom: Sensibiliser et former
+    mesures:
+      - {id: 1, titre: "Former les équipes opérationnelles à la sécurité des systèmes d'information"}
+      - {id: 2, titre: "Sensibiliser les utilisateurs aux bonnes pratiques élémentaires de sécurité informatique"}
+      - {id: 3, titre: "Maîtriser les risques de l'infogérance"}
+  - nom: Connaître le système d'information
+    mesures:
+      - {id: 4, titre: "Identifier les informations et serveurs les plus sensibles et maintenir un schéma du réseau"}
+      - {id: 5, titre: "Disposer d'un inventaire exhaustif des comptes privilégiés et le maintenir à jour"}
+      - {id: 6, titre: "Organiser les procédures d'arrivée, de départ et de changement de fonction des utilisateurs"}
+      - {id: 7, titre: "Autoriser la connexion au réseau de l'entité aux seuls équipements maîtrisés"}
+  - nom: Authentifier et contrôler les accès
+    mesures:
+      - {id: 8, titre: "Identifier nommément chaque personne accédant au système et distinguer les rôles utilisateur/administrateur"}
+      - {id: 9, titre: "Attribuer les bons droits sur les ressources sensibles du système d'information"}
+      - {id: 10, titre: "Définir et vérifier des règles de choix et de dimensionnement des mots de passe"}
+      - {id: 11, titre: "Protéger les mots de passe stockés sur les systèmes"}
+      - {id: 12, titre: "Changer les éléments d'authentification par défaut sur les équipements et services"}
+      - {id: 13, titre: "Privilégier lorsque c'est possible une authentification forte"}
+  - nom: Sécuriser les postes
+    mesures:
+      - {id: 14, titre: "Mettre en place un niveau de sécurité minimal sur l'ensemble du parc informatique"}
+      - {id: 15, titre: "Se protéger des menaces relatives à l'utilisation de supports amovibles"}
+      - {id: 16, titre: "Utiliser un outil de gestion centralisée afin d'homogénéiser les politiques de sécurité"}
+      - {id: 17, titre: "Activer et configurer le pare-feu local des postes de travail"}
+      - {id: 18, titre: "Chiffrer les données sensibles transmises par voie Internet"}
+  - nom: Sécuriser le réseau
+    mesures:
+      - {id: 19, titre: "Segmenter le réseau et mettre en place un cloisonnement entre ces zones"}
+      - {id: 20, titre: "S'assurer de la sécurité des réseaux d'accès Wi-Fi et de la séparation des usages"}
+      - {id: 21, titre: "Utiliser des protocoles réseaux sécurisés dès qu'ils existent"}
+      - {id: 22, titre: "Mettre en place une passerelle d'accès sécurisé à Internet"}
+      - {id: 23, titre: "Cloisonner les services visibles depuis Internet du reste du système d'information"}
+      - {id: 24, titre: "Protéger sa messagerie professionnelle"}
+      - {id: 25, titre: "Sécuriser les interconnexions réseau dédiées avec les partenaires"}
+      - {id: 26, titre: "Contrôler et protéger l'accès aux salles serveurs et aux locaux techniques"}
+  - nom: Sécuriser l'administration
+    mesures:
+      - {id: 27, titre: "Interdire l'accès à Internet depuis les postes ou serveurs utilisés pour l'administration du système d'information"}
+      - {id: 28, titre: "Utiliser un réseau dédié et cloisonné pour l'administration du système d'information"}
+      - {id: 29, titre: "Limiter au strict besoin opérationnel les droits d'administration sur les postes de travail"}
+  - nom: Gérer le nomadisme
+    mesures:
+      - {id: 30, titre: "Prendre des mesures de sécurisation physique des terminaux nomades"}
+      - {id: 31, titre: "Chiffrer les données sensibles, en particulier sur le matériel potentiellement perdable"}
+      - {id: 32, titre: "Sécuriser la connexion réseau des postes utilisés en situation de nomadisme"}
+      - {id: 33, titre: "Adopter des politiques de sécurité dédiées aux terminaux mobiles"}
+  - nom: Maintenir le système d'information à jour
+    mesures:
+      - {id: 34, titre: "Définir une politique de mise à jour des composants du système d'information"}
+      - {id: 35, titre: "Anticiper la fin de la maintenance des logiciels et systèmes et limiter les adhérences logicielles"}
+  - nom: Superviser, auditer, réagir
+    mesures:
+      - {id: 36, titre: "Activer et configurer les journaux des composants les plus importants"}
+      - {id: 37, titre: "Définir et appliquer une politique de sauvegarde des composants critiques"}
+      - {id: 38, titre: "Procéder à des contrôles et audits de sécurité réguliers puis appliquer les actions correctives associées"}
+      - {id: 39, titre: "Désigner un référent en sécurité des systèmes d'information et le faire connaître auprès du personnel"}
+      - {id: 40, titre: "Définir une procédure de gestion des incidents de sécurité"}
+  - nom: Pour aller plus loin
+    mesures:
+      - {id: 41, titre: "Mener une analyse de risques formelle"}
+      - {id: 42, titre: "Privilégier l'usage de produits et de services qualifiés par l'ANSSI"}
