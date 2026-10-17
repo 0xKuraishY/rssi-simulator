@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Tests / couverture
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Packaging PyInstaller (build.py)
+build/
+dist/
