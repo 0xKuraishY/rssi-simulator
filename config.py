@@ -23,7 +23,7 @@ APP_NAME = "RSSI Simulator"
 APP_TITLE = "RSSI Simulator"
 APP_SLUG = "rssi-simulator"
 LEGACY_SLUG = "cyber-rssi"  # ancien nom du jeu : dossier de données repris au premier lancement
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 DEFAULT_LANG = "fr"
 SUPPORTED_LANGS = ("fr",)
 

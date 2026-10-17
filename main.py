@@ -51,7 +51,7 @@ def cli(headless: bool, scenario: str | None, lang: str, seed: int | None, diffi
             return
         _run_headless(scenario or "hopital", seed, strategy, report, difficulty or "standard", years or 3)
         return
-    size = config.DEFAULT_RESOLUTION
+    size = None  # adaptée à l'écran
     if resolution:
         try:
             w, h = (int(x) for x in resolution.lower().split("x"))
@@ -67,7 +67,7 @@ def _run_ui(scenario: str | None, seed: int | None, size: tuple[int, int] | None
             headless: bool, frames: int | None, difficulty: str | None = None, years: int | None = None) -> None:
     from engine.game_loop import GameApp
 
-    app = GameApp(size=size or config.DEFAULT_RESOLUTION, headless=headless, seed=seed, fullscreen=fullscreen)
+    app = GameApp(size=size, headless=headless, seed=seed, fullscreen=fullscreen)
     if difficulty:
         app.settings["difficulty"] = difficulty
     if years:

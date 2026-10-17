@@ -64,7 +64,7 @@ def _load_settings(stored: Any) -> dict[str, Any]:
 class GameApp:
     def __init__(
         self,
-        size: tuple[int, int] = config.DEFAULT_RESOLUTION,
+        size: tuple[int, int] | None = None,
         headless: bool = False,
         seed: int | None = None,
         scenario: str | None = None,
@@ -211,6 +211,8 @@ class GameApp:
         for ev in events:
             if ev.type == pygame.QUIT:
                 self.running = False
+            elif ev.type == pygame.VIDEORESIZE:
+                R.enforce_min_size(self.display, ev)
         self.ui.begin_frame(events, dt)
         self._net_frame()
         if self.ui.key(pygame.K_F1):

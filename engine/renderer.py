@@ -4,10 +4,15 @@ Ordre de tentative :
 1. GPU : ``DOUBLEBUF | HWSURFACE`` et vérification ``pygame.display.Info().hw``
 2. CPU : ``DOUBLEBUF | SWSURFACE``
 3. Headless (CI/CD) : ``SDL_VIDEODRIVER=offscreen`` positionné avant l'init
+
+Sans résolution imposée, la fenêtre est redimensionnable et s'adapte à l'écran : elle est
+agrandie (maximisée) si 1920x1080 ne tient pas dans la zone utilisable (barres du bureau).
+Sur un écran trop petit pour 1280x720, l'image est rendue en 1280x720 puis réduite (SCALED).
 """
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -39,10 +44,40 @@ class DisplayInfo:
     mode: str  # "gpu" | "cpu" | "headless"
     size: tuple[int, int]
     driver: str
+    flags: int = 0
+
+
+DESKTOP_MARGIN = (0, 100)  # place prise par les barres du bureau et la barre de titre
+
+
+def _window_plan(size: tuple[int, int] | None, fullscreen: bool) -> tuple[tuple[int, int], int, bool]:
+    """Taille de fenêtre, drapeaux supplémentaires et maximisation, selon la taille du bureau."""
+    desktop = pygame.display.get_desktop_sizes()[0]
+    min_w, min_h = config.MIN_RESOLUTION
+    if fullscreen:
+        return size or desktop, 0, False
+    if size is not None:
+        return (max(size[0], min_w), max(size[1], min_h)), pygame.RESIZABLE, False
+    free_w, free_h = desktop[0] - DESKTOP_MARGIN[0], desktop[1] - DESKTOP_MARGIN[1]
+    if free_w < min_w or free_h < min_h:
+        # écran trop petit : rendu à la taille minimale, mis à l'échelle par SDL (souris comprise)
+        return config.MIN_RESOLUTION, pygame.SCALED | pygame.RESIZABLE, True
+    w, h = config.DEFAULT_RESOLUTION
+    if w <= free_w and h <= free_h:
+        return (w, h), pygame.RESIZABLE, False
+    return (max(min(w, free_w), min_w), max(min(h, free_h), min_h)), pygame.RESIZABLE, True
+
+
+def _maximize() -> None:
+    try:
+        from pygame._sdl2.video import Window
+        Window.from_display_module().maximize()
+    except Exception as exc:  # API interne de pygame : jamais bloquant
+        log.warning("Impossible d'agrandir la fenêtre : %s", exc)
 
 
 def init_display(
-    size: tuple[int, int] = config.DEFAULT_RESOLUTION,
+    size: tuple[int, int] | None = None,
     fullscreen: bool = False,
     headless: bool = False,
 ) -> tuple[pygame.Surface, DisplayInfo]:
@@ -55,26 +90,49 @@ def init_display(
     if icon is not None:
         pygame.display.set_icon(icon)  # barre de titre et barre des tâches, avant set_mode
     pygame.font.init()
-    w = max(size[0], config.MIN_RESOLUTION[0])
-    h = max(size[1], config.MIN_RESOLUTION[1])
-    extra = pygame.FULLSCREEN if fullscreen and not config.is_headless() else 0
     driver = pygame.display.get_driver()
 
     if config.is_headless():
+        size = size or config.DEFAULT_RESOLUTION
+        w = max(size[0], config.MIN_RESOLUTION[0])
+        h = max(size[1], config.MIN_RESOLUTION[1])
         surface = pygame.display.set_mode((w, h))
         return surface, DisplayInfo("headless", (w, h), driver)
 
+    (w, h), extra, maximize = _window_plan(size, fullscreen)
+    if fullscreen:
+        extra |= pygame.FULLSCREEN
+    if extra & pygame.SCALED:
+        # lissage de la réduction (SDL utilise sinon le plus proche voisin, illisible pour le texte)
+        os.environ.setdefault("SDL_RENDER_SCALE_QUALITY", "linear")
+    surface = None
+    flags = pygame.DOUBLEBUF | pygame.HWSURFACE | extra
     try:
-        surface = pygame.display.set_mode((w, h), pygame.DOUBLEBUF | pygame.HWSURFACE | extra)
-        if pygame.display.Info().hw == 1:
-            log.info("Rendu GPU actif (%s)", driver)
-            return surface, DisplayInfo("gpu", surface.get_size(), driver)
-        log.info("Accélération matérielle indisponible, bascule en rendu CPU")
+        surface = pygame.display.set_mode((w, h), flags)
+        mode = "gpu" if pygame.display.Info().hw == 1 else "cpu"
+        if mode == "cpu":
+            log.info("Accélération matérielle indisponible, bascule en rendu CPU")
     except pygame.error as exc:
         log.warning("Échec du mode GPU : %s", exc)
+    if surface is None or mode == "cpu":
+        flags = pygame.DOUBLEBUF | pygame.SWSURFACE | extra
+        surface = pygame.display.set_mode((w, h), flags)
+        mode = "cpu"
+    else:
+        log.info("Rendu GPU actif (%s)", driver)
+    if maximize:
+        _maximize()
+    return surface, DisplayInfo(mode, surface.get_size(), driver, flags)
 
-    surface = pygame.display.set_mode((w, h), pygame.DOUBLEBUF | pygame.SWSURFACE | extra)
-    return surface, DisplayInfo("cpu", surface.get_size(), driver)
+
+def enforce_min_size(info: DisplayInfo, event: pygame.event.Event) -> None:
+    """Fenêtre réduite par l'utilisateur sous la taille minimale : on la ramène à cette taille
+    (en dessous, les écrans se chevauchent). Sans effet en mode SCALED, où SDL met à l'échelle."""
+    if event.type != pygame.VIDEORESIZE or info.flags & (pygame.SCALED | pygame.FULLSCREEN):
+        return
+    min_w, min_h = config.MIN_RESOLUTION
+    if event.w < min_w or event.h < min_h:
+        pygame.display.set_mode((max(event.w, min_w), max(event.h, min_h)), info.flags)
 
 
 # ---------------------------------------------------------------------------

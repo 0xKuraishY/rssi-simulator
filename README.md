@@ -349,12 +349,13 @@ make package-linux  # binaire autonome dist/rssi-simulator
 make package-win    # sous Windows : dist\rssi-simulator.exe
 ```
 
-Pour publier une version, il suffit de pousser un tag : le workflow
-`.github/workflows/release.yml` teste, construit les deux binaires et les attache à la release.
+Pour publier une version, mettez à jour `VERSION` dans `config.py`, puis poussez le tag
+correspondant : le workflow `.github/workflows/release.yml` teste, construit les deux binaires
+(Windows et Linux) et les attache à la release. Inutile d'y joindre un binaire construit en local.
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 </details>
